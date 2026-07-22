@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Voter Verification</title>
+
+<link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+
+<body>
+
+<header>
+<h1>🇳🇬 Nigeria Online Voting System</h1>
+</header>
+
+
+<main class="form-container">
+
+<h2>Voter Verification</h2>
+
+
+<form method="POST" action="/verification">
+
+
+<label>Full Name</label>
+<input type="text" name="fullName" required>
+
+
+<label>Date Of Birth</label>
+<input type="date" name="dateOfBirth" required>
+
+
+<label>Gender</label>
+<input type="text" name="gender" required>
+
+
+<label>State</label>
+<input type="text" name="state" required>
+
+
+<label>LGA</label>
+<input type="text" name="lga" required>
+
+
+<label>Ward</label>
+<input type="text" name="ward" required>
+
+
+<label>Polling Unit</label>
+<input type="text" name="pollingUnit" required>
+
+
+<button type="submit">
+Submit Verification
+</button>
+
+
+</form>
+
+
+</main>
+
+</body>
+</html>

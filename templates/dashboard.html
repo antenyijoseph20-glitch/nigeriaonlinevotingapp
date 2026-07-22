@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | Nigeria Online Voting System</title>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="container">
+
+        <h1>
+            🇳🇬 Nigeria Online Voting System
+        </h1>
+
+
+        <nav>
+
+            <a href="/dashboard">
+                Dashboard
+            </a>
+
+
+            <a href="/profile">
+                Profile
+            </a>
+
+
+            <a href="/verification">
+                Verification
+            </a>
+
+
+            <a href="/logout">
+                Logout
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+
+<main class="dashboard-container">
+
+
+<section class="welcome-card">
+
+    <h2>
+        Welcome, {{.FirstName}} {{.LastName}} 👋
+    </h2>
+
+
+    <p>
+        Manage your voter account and election activities from your dashboard.
+    </p>
+
+</section>
+
+
+
+
+
+<section class="dashboard-grid">
+
+
+
+<div class="card">
+
+<h3>
+    👤 Personal Information
+</h3>
+
+
+<p>
+<strong>Email:</strong>
+{{.Email}}
+</p>
+
+
+<p>
+<strong>Phone:</strong>
+{{.PhoneNumber}}
+</p>
+
+
+<p>
+<strong>NIN:</strong>
+{{.NIN}}
+</p>
+
+
+<p>
+<strong>State:</strong>
+{{.State}}
+</p>
+
+
+<p>
+<strong>LGA:</strong>
+{{.LGA}}
+</p>
+
+
+<p>
+<strong>Polling Unit:</strong>
+{{.PollingUnit}}
+</p>
+
+
+<a class="btn" href="/profile">
+Update Profile
+</a>
+
+
+</div>
+
+
+
+
+
+
+<div class="card">
+
+<h3>
+    🛡 Verification Status
+</h3>
+
+
+{{if .IsVerified}}
+
+<p class="success">
+✅ Verified Voter
+</p>
+
+
+{{else}}
+
+<p class="warning">
+⏳ Verification Pending
+</p>
+
+
+<a class="btn" href="/verification">
+Complete Verification
+</a>
+
+
+{{end}}
+
+
+
+</div>
+
+
+
+
+
+
+<div class="card">
+
+
+<h3>
+    🗳 Voting Status
+</h3>
+
+
+
+<p>
+
+<strong>Role:</strong>
+
+{{.Role}}
+
+</p>
+
+
+
+<p>
+
+<strong>Has Voted:</strong>
+
+{{if .HasVoted}}
+
+Yes ✅
+
+{{else}}
+
+No
+
+{{end}}
+
+</p>
+
+
+
+{{if .IsVerified}}
+
+<button class="vote-btn">
+
+Cast Vote
+
+</button>
+
+{{else}}
+
+<p class="warning">
+
+Complete verification before voting.
+
+</p>
+
+{{end}}
+
+
+
+</div>
+
+
+</section>
+
+
+
+</main>
+
+
+</body>
+
+</html>
