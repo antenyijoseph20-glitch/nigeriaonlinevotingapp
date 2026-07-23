@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Admin Dashboard
+</title>
+
+<link rel="stylesheet"
+href="/static/css/style.css">
+
+</head>
+
+<body>
+
+<header>
+
+<h1>
+🇳🇬 Nigeria Online Voting System
+</h1>
+
+<nav>
+
+<a href="/dashboard">
+Dashboard
+</a>
+
+<a href="/logout">
+Logout
+</a>
+
+</nav>
+
+</header>
+
+<main>
+
+<h2>
+Administrator Dashboard
+</h2>
+
+<h3>
+Pending Verification Requests
+</h3>
+
+<table>
+
+<tr>
+
+<th>ID</th>
+
+<th>Name</th>
+
+<th>State</th>
+
+<th>Status</th>
+
+<th>Action</th>
+
+</tr>
+
+{{range .}}
+
+<tr>
+
+<td>{{.ID}}</td>
+
+<td>{{.FullName}}</td>
+
+<td>{{.State}}</td>
+
+<td>{{.Status}}</td>
+
+<td>
+
+<a href="/admin/verification?id={{.ID}}">
+View
+</a>
+
+</td>
+
+</tr>
+
+{{else}}
+
+<tr>
+
+<td colspan="5">
+
+No verification requests.
+
+</td>
+
+</tr>
+
+{{end}}
+
+</table>
+
+</main>
+
+</body>
+
+</html>

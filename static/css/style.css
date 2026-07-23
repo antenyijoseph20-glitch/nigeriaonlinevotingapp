@@ -1,239 +1,295 @@
+/* ==========================================
+   NIGERIA ONLINE VOTING SYSTEM
+   GLOBAL STYLES
+========================================== */
+
+:root{
+
+    --primary:#008753;
+    --primary-dark:#006747;
+
+    --gold:#C9A227;
+
+    --success:#16A34A;
+
+    --warning:#F59E0B;
+
+    --danger:#DC2626;
+
+    --background:#F4F7FA;
+
+    --white:#FFFFFF;
+
+    --text:#1F2937;
+
+    --gray:#6B7280;
+
+    --border:#E5E7EB;
+
+    --shadow:0 4px 12px rgba(0,0,0,.10);
+
+}
+
 *{
+
     margin:0;
+
     padding:0;
+
     box-sizing:border-box;
+
 }
 
 body{
-    font-family:Arial, Helvetica, sans-serif;
-    background:#f4f7fb;
-    color:#333;
-}
 
-header{
-    background:#008751;
-    color:white;
-    padding:20px;
+    font-family:Arial, Helvetica, sans-serif;
+
+    background:var(--background);
+
+    color:var(--text);
+
+    line-height:1.6;
+
 }
 
 .container{
+
     width:90%;
+
+    max-width:1200px;
+
     margin:auto;
+
+}
+
+h1,h2,h3{
+
+    color:var(--primary-dark);
+
+}
+
+p{
+
+    color:var(--gray);
+
+}
+
+a{
+
+    text-decoration:none;
+
+    color:inherit;
+
+}
+
+img{
+
+    max-width:100%;
+
+}
+/* ==========================================
+   HEADER
+========================================== */
+
+header{
+
+    background:var(--primary);
+
+    color:white;
+
+    padding:18px 0;
+
+    box-shadow:var(--shadow);
+
+}
+
+header .container{
+
     display:flex;
+
     justify-content:space-between;
+
     align-items:center;
+
+    flex-wrap:wrap;
+
+}
+
+header h1{
+
+    color:white;
+
+    font-size:30px;
+
+}
+/* ==========================================
+   NAVIGATION
+========================================== */
+
+nav{
+
+    display:flex;
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
 }
 
 nav a{
+
     color:white;
-    text-decoration:none;
-    margin-left:20px;
+
     font-weight:bold;
+
+    padding:10px 16px;
+
+    border-radius:8px;
+
+    transition:.3s;
+
 }
 
 nav a:hover{
-    text-decoration:underline;
-}
 
-.hero{
-    text-align:center;
-    padding:80px 20px;
-}
+    background:white;
 
-.hero h2{
-    font-size:40px;
-    margin-bottom:20px;
-}
+    color:var(--primary);
 
-.hero p{
-    font-size:20px;
-    margin-bottom:30px;
 }
+/* ==========================================
+   BUTTONS
+========================================== */
 
-button{
-    background:#008751;
+button,
+.btn,
+.btn-view,
+.action-card{
+
+    background:var(--primary);
+
     color:white;
+
     border:none;
-    padding:15px 35px;
-    font-size:18px;
+
+    padding:12px 22px;
+
     border-radius:8px;
+
     cursor:pointer;
-}
 
-button:hover{
-    background:#006b40;
-}
-
-.features{
-    width:90%;
-    margin:50px auto;
-    display:flex;
-    justify-content:space-between;
-    gap:20px;
-}
-
-.card{
-    background:white;
-    padding:30px;
-    border-radius:10px;
-    text-align:center;
-    box-shadow:0 4px 10px rgba(0,0,0,.1);
-    flex:1;
-}
-
-footer{
-    background:#222;
-    color:white;
-    text-align:center;
-    padding:20px;
-    margin-top:60px;
-}
-
-.form-container{
-    width:400px;
-    margin:60px auto;
-    background:white;
-    padding:30px;
-    border-radius:10px;
-    box-shadow:0 4px 10px rgba(0,0,0,.1);
-}
-
-.form-container h2{
-    text-align:center;
-    margin-bottom:20px;
-}
-
-form{
-    display:flex;
-    flex-direction:column;
-}
-
-label{
-    margin-top:15px;
-    margin-bottom:5px;
-    font-weight:bold;
-}
-
-input{
-    padding:12px;
-    border:1px solid #ccc;
-    border-radius:5px;
     font-size:16px;
-}
 
-form button{
-    margin-top:25px;
-}
-.dashboard-container {
+    font-weight:bold;
 
-    width: 90%;
-    max-width: 1200px;
-    margin: 40px auto;
-
-}
-
-
-
-.welcome-card {
-
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    margin-bottom: 30px;
-
-}
-
-
-
-.dashboard-grid {
-
-    display: grid;
-
-    grid-template-columns: repeat(
-        auto-fit,
-        minmax(280px, 1fr)
-    );
-
-    gap: 25px;
-
-}
-
-
-
-.card {
-
-    background: white;
-
-    padding: 25px;
-
-    border-radius: 12px;
-
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-
-}
-
-
-
-.card h3 {
-
-    margin-bottom: 20px;
-
-}
-
-
-
-.btn {
+    transition:.3s;
 
     display:inline-block;
 
-    margin-top:20px;
+}
 
-    padding:12px 20px;
+button:hover,
+.btn:hover,
+.btn-view:hover,
+.action-card:hover{
 
-    background:#008751;
+    background:var(--primary-dark);
 
-    color:white;
-
-    text-decoration:none;
-
-    border-radius:8px;
+    transform:translateY(-2px);
 
 }
 
+.logout{
 
-
-.vote-btn {
-
-    margin-top:20px;
-
-    padding:12px 25px;
-
-    background:#003366;
-
-    color:white;
-
-    border:none;
-
-    border-radius:8px;
+    background:var(--danger);
 
 }
 
+.logout:hover{
 
+    background:#b91c1c;
 
-.success {
+}
 
-    color:green;
+.success{
+
+    background:var(--success);
+
+}
+
+.warning{
+
+    background:var(--warning);
+
+}
+/* ==========================================
+   FORMS
+========================================== */
+
+.form-container{
+
+    background:white;
+
+    max-width:650px;
+
+    margin:40px auto;
+
+    padding:35px;
+
+    border-radius:12px;
+
+    box-shadow:var(--shadow);
+
+}
+
+form{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+label{
+
+    margin-top:18px;
+
+    margin-bottom:8px;
 
     font-weight:bold;
 
 }
 
+input,
+select,
+textarea{
 
+    padding:14px;
 
-.warning {
+    border:1px solid var(--border);
 
-    color:#b8860b;
+    border-radius:8px;
 
-    font-weight:bold;
+    font-size:16px;
+
+    transition:.3s;
+
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+
+    outline:none;
+
+    border-color:var(--primary);
+
+    box-shadow:0 0 8px rgba(0,135,83,.2);
+
+}
+
+form button{
+
+    margin-top:25px;
 
 }

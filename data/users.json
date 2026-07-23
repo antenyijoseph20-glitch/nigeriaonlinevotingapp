@@ -94,5 +94,29 @@
         "created_at": "2026-07-22T16:12:14.023443826+01:00",
         "updated_at": "2026-07-22T16:12:14.023443826+01:00",
         "last_login": "0001-01-01T00:00:00Z"
+    },
+    {
+        "id": 5,
+        "first_name": "antenyi",
+        "last_name": "joseph",
+        "other_name": "",
+        "date_of_birth": "0001-01-01T00:00:00Z",
+        "gender": "Male",
+        "email": "antenyijoseph20@gmail.com",
+        "phone_number": "07012572796",
+        "password_hash": "$2a$10$LNG8KL/p6YB2cg8mR1rwAu94Mjq94./mmYZIiUyk/7dfNGDCmSdYy",
+        "nin": "65378297283",
+        "vin": "",
+        "state": "benue",
+        "lga": "agatu",
+        "ward": "ogwule kaduna",
+        "polling_unit": "primary health care",
+        "role": "voter",
+        "is_verified": false,
+        "has_voted": false,
+        "account_active": false,
+        "created_at": "2026-07-23T09:30:14.455527243+01:00",
+        "updated_at": "2026-07-23T14:14:39.001427484+01:00",
+        "last_login": "0001-01-01T00:00:00Z"
     }
 ]

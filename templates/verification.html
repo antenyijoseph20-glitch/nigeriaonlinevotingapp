@@ -1,65 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voter Verification | Nigeria Online Voting System</title>
 
-<title>Voter Verification</title>
-
-<link rel="stylesheet" href="/static/css/style.css">
-
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
 <body>
 
 <header>
-<h1>🇳🇬 Nigeria Online Voting System</h1>
-</header>
 
+    <div class="container">
+
+        <h1>🇳🇬 Nigeria Online Voting System</h1>
+
+        <nav>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/profile">Profile</a>
+            <a href="/verification">Verification</a>
+            <a href="/logout">Logout</a>
+        </nav>
+
+    </div>
+
+</header>
 
 <main class="form-container">
 
-<h2>Voter Verification</h2>
+    <h2>Voter Verification</h2>
 
+    <p>
+        Complete the form below. Your information will be reviewed before your
+        account is approved for voting.
+    </p>
 
-<form method="POST" action="/verification">
+    <form action="/verification" method="POST">
 
+        <label>Full Name</label>
+        <input
+            type="text"
+            name="fullName"
+            placeholder="Enter your full name"
+            required>
 
-<label>Full Name</label>
-<input type="text" name="fullName" required>
+        <label>Date of Birth</label>
+        <input
+            type="date"
+            name="dateOfBirth"
+            required>
 
+        <label>Gender</label>
 
-<label>Date Of Birth</label>
-<input type="date" name="dateOfBirth" required>
+        <select name="gender" required>
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
 
+        <label>State</label>
+        <input
+            type="text"
+            name="state"
+            placeholder="Enter your state"
+            required>
 
-<label>Gender</label>
-<input type="text" name="gender" required>
+        <label>Local Government Area (LGA)</label>
+        <input
+            type="text"
+            name="lga"
+            placeholder="Enter your LGA"
+            required>
 
+        <label>Ward</label>
+        <input
+            type="text"
+            name="ward"
+            placeholder="Enter your ward"
+            required>
 
-<label>State</label>
-<input type="text" name="state" required>
+        <label>Polling Unit</label>
+        <input
+            type="text"
+            name="pollingUnit"
+            placeholder="Enter your polling unit"
+            required>
 
+        <label>Email Address</label>
+        <input
+            type="email"
+            value="{{.Email}}"
+            readonly>
 
-<label>LGA</label>
-<input type="text" name="lga" required>
+        <label>National Identification Number (NIN)</label>
+        <input
+            type="text"
+            value="{{.NIN}}"
+            readonly>
 
+        <button type="submit">
+            Submit Verification
+        </button>
 
-<label>Ward</label>
-<input type="text" name="ward" required>
+        <a class="btn" href="/dashboard">
+            Cancel
+        </a>
 
-
-<label>Polling Unit</label>
-<input type="text" name="pollingUnit" required>
-
-
-<button type="submit">
-Submit Verification
-</button>
-
-
-</form>
-
+    </form>
 
 </main>
 
 </body>
+
 </html>

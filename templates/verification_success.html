@@ -1,52 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Submitted | Nigeria Online Voting System</title>
 
-<title>Verification Submitted</title>
-
-<link rel="stylesheet" href="/static/css/style.css">
-
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
-
 
 <body>
 
 <header>
 
-<h1>
-🇳🇬 Nigeria Online Voting System
-</h1>
+    <div class="container">
+
+        <h1>🇳🇬 Nigeria Online Voting System</h1>
+
+        <nav>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/profile">Profile</a>
+            <a href="/logout">Logout</a>
+        </nav>
+
+    </div>
 
 </header>
 
-
 <main class="form-container">
 
+    <h2>✅ Verification Submitted Successfully</h2>
 
-<h2>
-✅ Verification Submitted
-</h2>
+    <p>
+        Thank you for submitting your voter verification details.
+    </p>
 
+    <p>
+        Your request has been received and is currently under review by an election administrator.
+    </p>
 
-<p>
-Your voter verification request has been submitted.
-</p>
+    <div class="status-card">
+        <h3>Current Status</h3>
+        <p><strong>⏳ Pending Review</strong></p>
+    </div>
 
+    <p>
+        You will be able to vote only after your verification has been approved.
+    </p>
 
-<p>
-Status:
-<strong>Pending Review</strong>
-</p>
-
-
-<a href="/dashboard">
-Return Dashboard
-</a>
-
+    <div class="button-group">
+        <a href="/dashboard" class="btn">
+            Return to Dashboard
+        </a>
+    </div>
 
 </main>
-
 
 </body>
 

@@ -163,7 +163,12 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		sessions.CreateSession(w, user.ID)
 
 		// Redirect to dashboard
-		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+		http.Redirect(w,
+			r,
+			"/dashboard",
+			http.StatusSeeOther,
+		)
+		return
 
 	default:
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)

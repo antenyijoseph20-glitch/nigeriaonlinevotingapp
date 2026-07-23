@@ -23,6 +23,9 @@ func main() {
 	verificationRepo := repositories.NewVerificationRepository(
 		"data/verifications.json",
 	)
+	electionRepo := repositories.NewElectionRepository(
+		"data/elections.json",
+	)
 
 	// ==============================
 	// Service Layer
@@ -36,6 +39,14 @@ func main() {
 		verificationRepo,
 		userRepo,
 	)
+	electionService := services.NewElectionService(
+		electionRepo,
+	)
+
+	adminService := services.NewAdminService(
+		userRepo,
+		verificationRepo,
+	)
 
 	// ==============================
 	// Handler Layer
@@ -47,6 +58,7 @@ func main() {
 
 	dashboardHandler := handlers.NewDashboardHandler(
 		authService,
+		verificationService,
 	)
 
 	profileHandler := handlers.NewProfileHandler(
@@ -54,6 +66,25 @@ func main() {
 	)
 
 	verificationHandler := handlers.NewVerificationHandler(
+		verificationService,
+	)
+	electionHandler := handlers.NewElectionHandler(
+		electionService,
+	)
+
+	adminHandler := handlers.NewAdminHandler(
+		adminService,
+	)
+
+	adminVerificationHandler := handlers.NewAdminVerificationHandler(
+		verificationService,
+	)
+
+	adminApproveHandler := handlers.NewAdminApproveHandler(
+		verificationService,
+	)
+
+	adminRejectHandler := handlers.NewAdminRejectHandler(
 		verificationService,
 	)
 
@@ -103,6 +134,54 @@ func main() {
 		"/verification",
 		middleware.RequireAuth(
 			verificationHandler.Verification,
+		),
+	)
+
+	// ==============================
+	// Admin Routes
+	// ==============================
+
+	http.HandleFunc(
+		"/admin",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				adminHandler.Dashboard,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/admin/verification",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				adminVerificationHandler.View,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/admin/approve",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				adminApproveHandler.Approve,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/admin/reject",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				adminRejectHandler.Reject,
+			),
+		),
+	)
+	http.HandleFunc(
+		"/admin/elections",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				electionHandler.ElectionDashboard,
+			),
 		),
 	)
 

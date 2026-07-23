@@ -1,17 +1,40 @@
 package middleware
 
-import "net/http"
+import (
+	"net/http"
 
-// AdminMiddleware protects administrator routes.
-func AdminMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	"nigeriaonlinevoting/repositories"
+	"nigeriaonlinevoting/sessions"
+)
+
+// RequireAdmin allows only authenticated administrators.
+func RequireAdmin(next http.HandlerFunc) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		// Later we'll verify:
-		// 1. User is logged in.
-		// 2. User role is "admin".
+		// Get logged-in user ID from the session.
+		userID, err := sessions.GetSessionUserID(r)
+		if err != nil {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
 
-		next.ServeHTTP(w, r)
+		// Load users from the JSON repository.
+		userRepo := repositories.NewJSONRepository("data/users.json")
 
+		user, err := userRepo.GetByID(userID)
+		if err != nil {
+			http.Error(w, "User not found.", http.StatusUnauthorized)
+			return
+		}
+
+		// Allow only admins.
+		if user.Role != "admin" && user.Role != "super_admin" {
+			http.Error(w, "403 Forbidden", http.StatusForbidden)
+			return
+		}
+
+		// Continue to the next handler.
+		next(w, r)
 	}
 }

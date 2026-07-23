@@ -2,47 +2,74 @@ package handlers
 
 import (
 	"html/template"
+	"log"
 	"net/http"
 
+	"nigeriaonlinevoting/models"
 	"nigeriaonlinevoting/services"
 	"nigeriaonlinevoting/sessions"
 )
 
 type DashboardHandler struct {
-	AuthService *services.AuthService
+	AuthService         *services.AuthService
+	VerificationService *services.VerificationService
 }
 
-func NewDashboardHandler(service *services.AuthService) *DashboardHandler {
+func NewDashboardHandler(
+	authService *services.AuthService,
+	verificationService *services.VerificationService,
+) *DashboardHandler {
+
 	return &DashboardHandler{
-		AuthService: service,
+		AuthService:         authService,
+		VerificationService: verificationService,
 	}
 }
 
-func (h *DashboardHandler) Dashboard(w http.ResponseWriter, r *http.Request) {
+func (h *DashboardHandler) Dashboard(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 
-	// Read session cookie
+	// Get logged-in user ID
 	userID, err := sessions.GetSessionUserID(r)
 	if err != nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
-	// Load user information
+	// Load user
 	user, err := h.AuthService.GetUserByID(userID)
 	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		http.Error(w, "User not found.", http.StatusNotFound)
 		return
 	}
 
-	// Load dashboard template
+	// Default verification status
+	verificationStatus := "not_submitted"
+
+	verification, err := h.VerificationService.GetUserVerification(userID)
+	if err == nil && verification != nil {
+		verificationStatus = verification.Status
+	}
+
+	// Data sent to dashboard.html
+	data := struct {
+		User               *models.User
+		VerificationStatus string
+	}{
+		User:               user,
+		VerificationStatus: verificationStatus,
+	}
+
 	tmpl, err := template.ParseFiles("templates/dashboard.html")
 	if err != nil {
-		http.Error(w, "Unable to load dashboard", http.StatusInternalServerError)
+		http.Error(w, "Unable to load dashboard.", http.StatusInternalServerError)
 		return
 	}
 
-	// Display logged-in user
-	if err := tmpl.Execute(w, user); err != nil {
-		http.Error(w, "Unable to render dashboard", http.StatusInternalServerError)
+	if err := tmpl.Execute(w, data); err != nil {
+		log.Println("dashboard template execution:", err)
+		return
 	}
 }

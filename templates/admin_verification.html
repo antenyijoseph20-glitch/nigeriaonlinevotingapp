@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Verification Details</title>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>🇳🇬 Nigeria Online Voting System</h1>
+
+    <nav>
+        <a href="/admin">Admin Dashboard</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout">Logout</a>
+    </nav>
+
+</header>
+
+<main class="container">
+
+    <h2>Verification Details</h2>
+
+    <div class="card">
+
+        <h3>Applicant Information</h3>
+
+        <p><strong>Verification ID:</strong> {{.ID}}</p>
+
+        <p><strong>User ID:</strong> {{.UserID}}</p>
+
+        <p><strong>Full Name:</strong> {{.FullName}}</p>
+
+        <p><strong>Date of Birth:</strong> {{.DateOfBirth}}</p>
+
+        <p><strong>Gender:</strong> {{.Gender}}</p>
+
+    </div>
+
+    <div class="card">
+
+        <h3>Voting Information</h3>
+
+        <p><strong>State:</strong> {{.State}}</p>
+
+        <p><strong>LGA:</strong> {{.LGA}}</p>
+
+        <p><strong>Ward:</strong> {{.Ward}}</p>
+
+        <p><strong>Polling Unit:</strong> {{.PollingUnit}}</p>
+
+    </div>
+
+    <div class="card">
+
+        <h3>Verification Status</h3>
+
+        <p><strong>Status:</strong> {{.Status}}</p>
+
+        <p><strong>Submitted:</strong> {{.SubmittedAt}}</p>
+
+        <p><strong>Reviewed:</strong> {{.ReviewedAt}}</p>
+
+    </div>
+
+    <div class="actions">
+
+        <form action="/admin/approve" method="POST">
+
+            <input
+                type="hidden"
+                name="verificationID"
+                value="{{.ID}}">
+
+            <button type="submit">
+                ✅ Approve Verification
+            </button>
+
+        </form>
+
+        <form action="/admin/reject" method="POST">
+
+            <input
+                type="hidden"
+                name="verificationID"
+                value="{{.ID}}">
+
+            <button type="submit">
+                ❌ Reject Verification
+            </button>
+
+        </form>
+
+    </div>
+
+    <br>
+
+    <a href="/admin">
+        ← Back to Admin Dashboard
+    </a>
+
+</main>
+
+</body>
+
+</html>

@@ -171,3 +171,28 @@ func (s *VerificationService) RejectVerification(
 	)
 
 }
+
+// GetUserByID returns a user by ID.
+func (s *VerificationService) GetUserByID(
+	id int,
+) (*models.User, error) {
+
+	return s.userRepo.GetByID(id)
+}
+
+// GetVerificationByID returns a verification record by its ID.
+func (s *VerificationService) GetVerificationByID(
+	id int,
+) (*models.Verification, error) {
+
+	verifications := s.verificationRepo.GetAll()
+
+	for _, verification := range verifications {
+
+		if verification.ID == id {
+			return &verification, nil
+		}
+	}
+
+	return nil, errors.New("verification not found")
+}

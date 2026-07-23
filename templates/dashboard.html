@@ -4,17 +4,18 @@
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Dashboard | Nigeria Online Voting System</title>
 
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet"
+          href="/static/css/style.css">
 
 </head>
 
-
 <body>
-
 
 <header>
 
@@ -24,27 +25,21 @@
             🇳🇬 Nigeria Online Voting System
         </h1>
 
-
         <nav>
 
-            <a href="/dashboard">
-                Dashboard
-            </a>
+            <a href="/dashboard">Dashboard</a>
 
+            <a href="/profile">Profile</a>
 
-            <a href="/profile">
-                Profile
-            </a>
+            <a href="/verification">Verification</a>
 
+            {{if eq .User.Role "admin"}}
 
-            <a href="/verification">
-                Verification
-            </a>
+            <a href="/admin">Admin</a>
 
+            {{end}}
 
-            <a href="/logout">
-                Logout
-            </a>
+            <a href="/logout">Logout</a>
 
         </nav>
 
@@ -52,190 +47,245 @@
 
 </header>
 
+<main class="container">
 
+    <section class="welcome-card">
 
-<main class="dashboard-container">
+        <h2>
 
+            Welcome,
+            {{.User.FirstName}}
+            {{.User.LastName}}
+            👋
 
-<section class="welcome-card">
+        </h2>
 
-    <h2>
-        Welcome, {{.FirstName}} {{.LastName}} 👋
-    </h2>
+        <p>
 
+            Manage your voter account and election activities from your dashboard.
 
-    <p>
-        Manage your voter account and election activities from your dashboard.
-    </p>
+        </p>
 
-</section>
+    </section>
 
+    <section class="dashboard-grid">
 
+        <!-- Personal Information -->
 
+        <div class="card">
 
+            <h3>👤 Personal Information</h3>
 
-<section class="dashboard-grid">
+            <p>
 
+                <strong>Email:</strong>
 
+                {{.User.Email}}
 
-<div class="card">
+            </p>
 
-<h3>
-    👤 Personal Information
-</h3>
+            <p>
 
+                <strong>Phone:</strong>
 
-<p>
-<strong>Email:</strong>
-{{.Email}}
-</p>
+                {{.User.PhoneNumber}}
 
+            </p>
 
-<p>
-<strong>Phone:</strong>
-{{.PhoneNumber}}
-</p>
+            <p>
 
+                <strong>NIN:</strong>
 
-<p>
-<strong>NIN:</strong>
-{{.NIN}}
-</p>
+                {{.User.NIN}}
 
+            </p>
 
-<p>
-<strong>State:</strong>
-{{.State}}
-</p>
+            <p>
 
+                <strong>State:</strong>
 
-<p>
-<strong>LGA:</strong>
-{{.LGA}}
-</p>
+                {{.User.State}}
 
+            </p>
 
-<p>
-<strong>Polling Unit:</strong>
-{{.PollingUnit}}
-</p>
+            <p>
 
+                <strong>LGA:</strong>
 
-<a class="btn" href="/profile">
-Update Profile
-</a>
+                {{.User.LGA}}
 
+            </p>
 
-</div>
+            <p>
 
+                <strong>Polling Unit:</strong>
 
+                {{.User.PollingUnit}}
 
+            </p>
 
+            <a class="btn"
+               href="/profile">
 
+                Update Profile
 
-<div class="card">
+            </a>
 
-<h3>
-    🛡 Verification Status
-</h3>
+        </div>
 
+        <!-- Verification -->
 
-{{if .IsVerified}}
+        <div class="card">
 
-<p class="success">
-✅ Verified Voter
-</p>
+            <h3>
 
+                🛡 Verification Status
 
-{{else}}
+            </h3>
 
-<p class="warning">
-⏳ Verification Pending
-</p>
+            {{if eq .VerificationStatus "approved"}}
 
+                <p class="success">
 
-<a class="btn" href="/verification">
-Complete Verification
-</a>
+                    ✅ Verified
 
+                </p>
 
-{{end}}
+            {{else if eq .VerificationStatus "pending"}}
 
+                <p class="warning">
 
+                    ⏳ Pending Review
 
-</div>
+                </p>
 
+                <a class="btn"
+                   href="/verification">
 
+                    View Verification
 
+                </a>
 
+            {{else if eq .VerificationStatus "rejected"}}
 
+                <p class="danger">
 
-<div class="card">
+                    ❌ Rejected
 
+                </p>
 
-<h3>
-    🗳 Voting Status
-</h3>
+                <a class="btn"
+                   href="/verification">
 
+                    Submit Again
 
+                </a>
 
-<p>
+            {{else}}
 
-<strong>Role:</strong>
+                <p class="warning">
 
-{{.Role}}
+                    Verification Not Submitted
 
-</p>
+                </p>
 
+                <a class="btn"
+                   href="/verification">
 
+                    Complete Verification
 
-<p>
+                </a>
 
-<strong>Has Voted:</strong>
+            {{end}}
 
-{{if .HasVoted}}
+        </div>
 
-Yes ✅
+        <!-- Voting -->
 
-{{else}}
+        <div class="card">
 
-No
+            <h3>
 
-{{end}}
+                🗳 Voting Status
 
-</p>
+            </h3>
 
+            <p>
 
+                <strong>Role:</strong>
 
-{{if .IsVerified}}
+                {{.User.Role}}
 
-<button class="vote-btn">
+            </p>
 
-Cast Vote
+            <p>
 
-</button>
+                <strong>Has Voted:</strong>
 
-{{else}}
+                {{if .User.HasVoted}}
 
-<p class="warning">
+                    Yes ✅
 
-Complete verification before voting.
+                {{else}}
 
-</p>
+                    No
 
-{{end}}
+                {{end}}
 
+            </p>
 
+            {{if eq .VerificationStatus "approved"}}
 
-</div>
+                {{if .User.HasVoted}}
 
+                    <button disabled>
 
-</section>
+                        Vote Already Cast
 
+                    </button>
 
+                {{else}}
+
+                    <a class="btn"
+                       href="/vote">
+
+                        Cast Vote
+
+                    </a>
+
+                {{end}}
+
+            {{else}}
+
+                <p class="warning">
+
+                    Your account must be verified before voting.
+
+                </p>
+
+            {{end}}
+
+        </div>
+
+    </section>
 
 </main>
 
+<footer>
+
+    <p>
+
+        © 2026 Nigeria Online Voting System
+
+    </p>
+
+    <p>
+
+        Developed by Antenyi Joseph Ochohepo
+
+    </p>
+
+</footer>
 
 </body>
 

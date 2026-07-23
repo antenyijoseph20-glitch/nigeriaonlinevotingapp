@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Election Management
+    </title>
+
+    <link rel="stylesheet"
+          href="/static/css/style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="container">
+
+        <h1>
+
+            🇳🇬 Nigeria Online Voting System
+
+        </h1>
+
+        <nav>
+
+            <a href="/admin">
+                Admin Dashboard
+            </a>
+
+            <a href="/admin/elections">
+                Elections
+            </a>
+
+            <a href="/dashboard">
+                Dashboard
+            </a>
+
+            <a href="/logout">
+                Logout
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+<main class="container">
+
+    <section class="page-title">
+
+        <h2>
+
+            Election Management
+
+        </h2>
+
+        <p>
+
+            Create, manage, open and close elections.
+
+        </p>
+
+    </section>
+
+    <!-- Create Election -->
+
+    <section class="card">
+
+        <h3>
+
+            Create New Election
+
+        </h3>
+
+        <form
+            action="/admin/elections"
+            method="POST"
+            class="form-grid">
+
+            <div>
+
+                <label>
+
+                    Election Title
+
+                </label>
+
+                <input
+                    type="text"
+                    name="title"
+                    required>
+
+            </div>
+
+            <div>
+
+                <label>
+
+                    Description
+
+                </label>
+
+                <textarea
+                    name="description"
+                    rows="4"
+                    required></textarea>
+
+            </div>
+
+            <div>
+
+                <label>
+
+                    Start Date
+
+                </label>
+
+                <input
+                    type="date"
+                    name="startDate"
+                    required>
+
+            </div>
+
+            <div>
+
+                <label>
+
+                    End Date
+
+                </label>
+
+                <input
+                    type="date"
+                    name="endDate"
+                    required>
+
+            </div>
+
+            <button
+                class="btn"
+                type="submit">
+
+                Create Election
+
+            </button>
+
+        </form>
+
+    </section>
+
+    <!-- Election List -->
+
+    <section class="card">
+
+        <h3>
+
+            Existing Elections
+
+        </h3>
+
+        <table class="admin-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Title</th>
+
+                    <th>Status</th>
+
+                    <th>Start</th>
+
+                    <th>End</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {{if .Elections}}
+
+                    {{range .Elections}}
+
+                    <tr>
+
+                        <td>
+
+                            {{.ID}}
+
+                        </td>
+
+                        <td>
+
+                            {{.Title}}
+
+                        </td>
+
+                        <td>
+
+                            {{if eq .Status "draft"}}
+
+                                <span class="badge badge-warning">
+
+                                    Draft
+
+                                </span>
+
+                            {{else if eq .Status "open"}}
+
+                                <span class="badge badge-success">
+
+                                    Open
+
+                                </span>
+
+                            {{else}}
+
+                                <span class="badge badge-danger">
+
+                                    Closed
+
+                                </span>
+
+                            {{end}}
+
+                        </td>
+
+                        <td>
+
+                            {{.StartDate.Format "02 Jan 2006"}}
+
+                        </td>
+
+                        <td>
+
+                            {{.EndDate.Format "02 Jan 2006"}}
+
+                        </td>
+
+                        <td>
+
+                            <a
+                                class="btn-small"
+                                href="/admin/election/open?id={{.ID}}">
+
+                                Open
+
+                            </a>
+
+                            <a
+                                class="btn-small warning"
+                                href="/admin/election/close?id={{.ID}}">
+
+                                Close
+
+                            </a>
+
+                            <a
+                                class="btn-small danger"
+                                href="/admin/election/delete?id={{.ID}}">
+
+                                Delete
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {{end}}
+
+                {{else}}
+
+                    <tr>
+
+                        <td colspan="6">
+
+                            No elections created yet.
+
+                        </td>
+
+                    </tr>
+
+                {{end}}
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+</main>
+
+<footer>
+
+    <p>
+
+        © 2026 Nigeria Online Voting System
+
+    </p>
+
+</footer>
+
+</body>
+
+</html>
