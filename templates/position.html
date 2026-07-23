@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Position Management
+    </title>
+
+    <link rel="stylesheet"
+          href="/static/css/style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="container">
+
+        <h1>
+            🇳🇬 Nigeria Online Voting System
+        </h1>
+
+        <nav>
+
+            <a href="/admin">
+                Admin Dashboard
+            </a>
+
+            <a href="/admin/elections">
+                Elections
+            </a>
+
+            <a href="/admin/parties">
+                Political Parties
+            </a>
+
+            <a href="/admin/positions">
+                Positions
+            </a>
+
+            <a href="/logout">
+                Logout
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+<main class="container">
+
+    <section class="page-title">
+
+        <h2>
+
+            Position Management
+
+        </h2>
+
+        <p>
+
+            Create and manage elective offices for Nigerian elections.
+
+        </p>
+
+    </section>
+
+    <!-- Create Position -->
+
+    <section class="card">
+
+        <h3>
+
+            Create New Position
+
+        </h3>
+
+        <form
+            action="/admin/positions"
+            method="POST"
+            class="form-grid">
+
+            <div>
+
+                <label>
+
+                    Position Name
+
+                </label>
+
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="President"
+                    required>
+
+            </div>
+
+            <div>
+
+                <label>
+
+                    Government Level
+
+                </label>
+
+                <select
+                    name="level"
+                    required>
+
+                    <option value="">
+                        Select Level
+                    </option>
+
+                    <option value="Federal">
+                        Federal
+                    </option>
+
+                    <option value="State">
+                        State
+                    </option>
+
+                    <option value="Local Government">
+                        Local Government
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div>
+
+                <label>
+
+                    Number of Seats
+
+                </label>
+
+                <input
+                    type="number"
+                    name="seats"
+                    value="1"
+                    min="1"
+                    required>
+
+            </div>
+
+            <div>
+
+                <label>
+
+                    Description
+
+                </label>
+
+                <textarea
+                    name="description"
+                    rows="4"
+                    placeholder="Describe the position..."></textarea>
+
+            </div>
+
+            <button
+                class="btn"
+                type="submit">
+
+                Create Position
+
+            </button>
+
+        </form>
+
+    </section>
+
+    <!-- Position List -->
+
+    <section class="card">
+
+        <h3>
+
+            Registered Positions
+
+        </h3>
+
+        <table class="admin-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Name</th>
+
+                    <th>Level</th>
+
+                    <th>Seats</th>
+
+                    <th>Status</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {{if .Positions}}
+
+                {{range .Positions}}
+
+                <tr>
+
+                    <td>{{.ID}}</td>
+
+                    <td>{{.Name}}</td>
+
+                    <td>{{.Level}}</td>
+
+                    <td>{{.Seats}}</td>
+
+                    <td>
+
+                        {{if .IsActive}}
+
+                        <span class="badge badge-success">
+
+                            Active
+
+                        </span>
+
+                        {{else}}
+
+                        <span class="badge badge-danger">
+
+                            Inactive
+
+                        </span>
+
+                        {{end}}
+
+                    </td>
+
+                    <td>
+
+                        {{if .IsActive}}
+
+                        <a
+                            class="btn-small warning"
+                            href="/admin/position/deactivate?id={{.ID}}">
+
+                            Deactivate
+
+                        </a>
+
+                        {{else}}
+
+                        <a
+                            class="btn-small"
+                            href="/admin/position/activate?id={{.ID}}">
+
+                            Activate
+
+                        </a>
+
+                        {{end}}
+
+                        <a
+                            class="btn-small danger"
+                            href="/admin/position/delete?id={{.ID}}"
+                            onclick="return confirm('Delete this position?');">
+
+                            Delete
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {{end}}
+
+            {{else}}
+
+                <tr>
+
+                    <td colspan="6">
+
+                        No positions have been created.
+
+                    </td>
+
+                </tr>
+
+            {{end}}
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+</main>
+
+<footer>
+
+    <div class="container">
+
+        <p>
+
+            © 2026 Nigeria Online Voting System
+
+        </p>
+
+    </div>
+
+</footer>
+
+</body>
+
+</html>

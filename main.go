@@ -12,9 +12,9 @@ import (
 
 func main() {
 
-	// ==============================
+	// =====================================
 	// Repository Layer
-	// ==============================
+	// =====================================
 
 	userRepo := repositories.NewJSONRepository(
 		"data/users.json",
@@ -23,13 +23,26 @@ func main() {
 	verificationRepo := repositories.NewVerificationRepository(
 		"data/verifications.json",
 	)
+
 	electionRepo := repositories.NewElectionRepository(
 		"data/elections.json",
 	)
 
-	// ==============================
+	partyRepo := repositories.NewPartyRepository(
+		"data/parties.json",
+	)
+
+	positionRepo := repositories.NewPositionRepository(
+		"data/positions.json",
+	)
+
+	candidateRepo := repositories.NewCandidateRepository(
+		"data/candidates.json",
+	)
+
+	// =====================================
 	// Service Layer
-	// ==============================
+	// =====================================
 
 	authService := services.NewAuthService(
 		userRepo,
@@ -39,8 +52,24 @@ func main() {
 		verificationRepo,
 		userRepo,
 	)
+
 	electionService := services.NewElectionService(
 		electionRepo,
+	)
+
+	partyService := services.NewPartyService(
+		partyRepo,
+	)
+
+	positionService := services.NewPositionService(
+		positionRepo,
+	)
+
+	candidateService := services.NewCandidateService(
+		candidateRepo,
+		electionRepo,
+		partyRepo,
+		positionRepo,
 	)
 
 	adminService := services.NewAdminService(
@@ -48,9 +77,9 @@ func main() {
 		verificationRepo,
 	)
 
-	// ==============================
+	// =====================================
 	// Handler Layer
-	// ==============================
+	// =====================================
 
 	authHandler := handlers.NewAuthHandler(
 		authService,
@@ -67,9 +96,6 @@ func main() {
 
 	verificationHandler := handlers.NewVerificationHandler(
 		verificationService,
-	)
-	electionHandler := handlers.NewElectionHandler(
-		electionService,
 	)
 
 	adminHandler := handlers.NewAdminHandler(
@@ -88,33 +114,40 @@ func main() {
 		verificationService,
 	)
 
-	// ==============================
+	electionHandler := handlers.NewElectionHandler(
+		electionService,
+	)
+
+	partyHandler := handlers.NewPartyHandler(
+		partyService,
+	)
+
+	positionHandler := handlers.NewPositionHandler(
+		positionService,
+	)
+
+	candidateHandler := handlers.NewCandidateHandler(
+		candidateService,
+		electionService,
+		partyService,
+		positionService,
+	)
+
+	// =====================================
 	// Public Routes
-	// ==============================
+	// =====================================
 
-	http.HandleFunc(
-		"/",
-		handlers.HomeHandler,
-	)
+	http.HandleFunc("/", handlers.HomeHandler)
 
-	http.HandleFunc(
-		"/register",
-		authHandler.Register,
-	)
+	http.HandleFunc("/register", authHandler.Register)
 
-	http.HandleFunc(
-		"/login",
-		authHandler.Login,
-	)
+	http.HandleFunc("/login", authHandler.Login)
 
-	http.HandleFunc(
-		"/logout",
-		handlers.Logout,
-	)
+	http.HandleFunc("/logout", handlers.Logout)
 
-	// ==============================
-	// Protected Routes
-	// ==============================
+	// =====================================
+	// User Routes
+	// =====================================
 
 	http.HandleFunc(
 		"/dashboard",
@@ -137,9 +170,9 @@ func main() {
 		),
 	)
 
-	// ==============================
-	// Admin Routes
-	// ==============================
+	// =====================================
+	// Admin Dashboard
+	// =====================================
 
 	http.HandleFunc(
 		"/admin",
@@ -149,6 +182,10 @@ func main() {
 			),
 		),
 	)
+
+	// =====================================
+	// Verification
+	// =====================================
 
 	http.HandleFunc(
 		"/admin/verification",
@@ -176,6 +213,11 @@ func main() {
 			),
 		),
 	)
+
+	// =====================================
+	// Elections
+	// =====================================
+
 	http.HandleFunc(
 		"/admin/elections",
 		middleware.RequireAuth(
@@ -185,9 +227,111 @@ func main() {
 		),
 	)
 
-	// ==============================
+	http.HandleFunc(
+		"/admin/election/open",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				electionHandler.OpenElection,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/admin/election/close",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				electionHandler.CloseElection,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/admin/election/delete",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				electionHandler.DeleteElection,
+			),
+		),
+	)
+
+	// =====================================
+	// Political Parties
+	// =====================================
+
+	http.HandleFunc(
+		"/admin/parties",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				partyHandler.PartyDashboard,
+			),
+		),
+	)
+
+	// =====================================
+	// Positions
+	// =====================================
+
+	http.HandleFunc(
+		"/admin/positions",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				positionHandler.PositionDashboard,
+			),
+		),
+	)
+
+	// =====================================
+	// Candidates
+	// =====================================
+
+	http.HandleFunc(
+		"/admin/candidates",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				candidateHandler.CandidateDashboard,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/admin/candidate/approve",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				candidateHandler.Approve,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/admin/candidate/activate",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				candidateHandler.Activate,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/admin/candidate/deactivate",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				candidateHandler.Deactivate,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/admin/candidate/delete",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				candidateHandler.Delete,
+			),
+		),
+	)
+
+	// =====================================
 	// Static Files
-	// ==============================
+	// =====================================
 
 	fs := http.FileServer(
 		http.Dir("./static"),
@@ -201,21 +345,16 @@ func main() {
 		),
 	)
 
-	// ==============================
+	// =====================================
 	// Start Server
-	// ==============================
+	// =====================================
 
 	fmt.Println("=====================================")
 	fmt.Println(" 🇳🇬 Nigeria Online Voting System")
 	fmt.Println(" Server running on http://localhost:8080")
 	fmt.Println("=====================================")
 
-	err := http.ListenAndServe(
-		":8080",
-		nil,
-	)
-
-	if err != nil {
+	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 	}
 }

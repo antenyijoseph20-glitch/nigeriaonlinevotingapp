@@ -3,6 +3,7 @@ package handlers
 import (
 	"html/template"
 	"net/http"
+	"strconv"
 	"time"
 
 	"nigeriaonlinevoting/models"
@@ -154,4 +155,157 @@ func (h *ElectionHandler) ElectionDashboard(
 			http.StatusMethodNotAllowed,
 		)
 	}
+}
+func (h *ElectionHandler) OpenElection(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+
+	if r.Method != http.MethodGet {
+
+		http.Error(
+			w,
+			"Method Not Allowed",
+			http.StatusMethodNotAllowed,
+		)
+
+		return
+	}
+
+	id, err := strconv.Atoi(
+		r.URL.Query().Get("id"),
+	)
+
+	if err != nil {
+
+		http.Error(
+			w,
+			"Invalid election ID.",
+			http.StatusBadRequest,
+		)
+
+		return
+	}
+
+	err = h.ElectionService.OpenElection(id)
+
+	if err != nil {
+
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusBadRequest,
+		)
+
+		return
+	}
+
+	http.Redirect(
+		w,
+		r,
+		"/admin/elections",
+		http.StatusSeeOther,
+	)
+}
+func (h *ElectionHandler) CloseElection(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+
+	if r.Method != http.MethodGet {
+
+		http.Error(
+			w,
+			"Method Not Allowed",
+			http.StatusMethodNotAllowed,
+		)
+
+		return
+	}
+
+	id, err := strconv.Atoi(
+		r.URL.Query().Get("id"),
+	)
+
+	if err != nil {
+
+		http.Error(
+			w,
+			"Invalid election ID.",
+			http.StatusBadRequest,
+		)
+
+		return
+	}
+
+	err = h.ElectionService.CloseElection(id)
+
+	if err != nil {
+
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusBadRequest,
+		)
+
+		return
+	}
+
+	http.Redirect(
+		w,
+		r,
+		"/admin/elections",
+		http.StatusSeeOther,
+	)
+}
+func (h *ElectionHandler) DeleteElection(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+
+	if r.Method != http.MethodGet {
+
+		http.Error(
+			w,
+			"Method Not Allowed",
+			http.StatusMethodNotAllowed,
+		)
+
+		return
+	}
+
+	id, err := strconv.Atoi(
+		r.URL.Query().Get("id"),
+	)
+
+	if err != nil {
+
+		http.Error(
+			w,
+			"Invalid election ID.",
+			http.StatusBadRequest,
+		)
+
+		return
+	}
+
+	err = h.ElectionService.DeleteElection(id)
+
+	if err != nil {
+
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusBadRequest,
+		)
+
+		return
+	}
+
+	http.Redirect(
+		w,
+		r,
+		"/admin/elections",
+		http.StatusSeeOther,
+	)
 }

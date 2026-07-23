@@ -1,0 +1,526 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+
+Candidate Management
+
+</title>
+
+<link
+rel="stylesheet"
+href="/static/css/style.css">
+
+</head>
+
+<body>
+
+<header>
+
+<div class="container">
+
+<h1>
+
+🇳🇬 Nigeria Online Voting System
+
+</h1>
+
+<nav>
+
+<a href="/admin">
+
+Dashboard
+
+</a>
+
+<a href="/admin/elections">
+
+Elections
+
+</a>
+
+<a href="/admin/parties">
+
+Parties
+
+</a>
+
+<a href="/admin/positions">
+
+Positions
+
+</a>
+
+<a href="/logout">
+
+Logout
+
+</a>
+
+</nav>
+
+</div>
+
+</header>
+
+<main class="container">
+
+<section class="page-title">
+
+<h2>
+
+Candidate Management
+
+</h2>
+
+<p>
+
+Register and manage candidates contesting in elections.
+
+</p>
+
+</section>
+
+<section class="card">
+
+<h3>
+
+Register Candidate
+
+</h3>
+
+<form
+action="/admin/candidates"
+method="POST">
+
+<div class="form-grid">
+
+<div>
+
+<label>
+
+Election
+
+</label>
+
+<select
+name="election_id"
+required>
+
+<option value="">
+
+Select Election
+
+</option>
+
+{{range .Elections}}
+
+<option value="{{.ID}}">
+
+{{.Title}}
+
+</option>
+
+{{end}}
+
+</select>
+
+</div>
+
+<div>
+
+<label>
+
+Political Party
+
+</label>
+
+<select
+name="party_id"
+required>
+
+<option value="">
+
+Select Party
+
+</option>
+
+{{range .Parties}}
+
+<option value="{{.ID}}">
+
+{{.Name}}
+
+</option>
+
+{{end}}
+
+</select>
+
+</div>
+
+<div>
+
+<label>
+
+Position
+
+</label>
+
+<select
+name="position_id"
+required>
+
+<option value="">
+
+Select Position
+
+</option>
+
+{{range .Positions}}
+
+<option value="{{.ID}}">
+
+{{.Title}}
+
+</option>
+
+{{end}}
+
+</select>
+
+</div>
+
+<div>
+
+<label>
+
+First Name
+
+</label>
+
+<input
+type="text"
+name="first_name"
+required>
+
+</div>
+
+<div>
+
+<label>
+
+Last Name
+
+</label>
+
+<input
+type="text"
+name="last_name"
+required>
+
+</div>
+
+<div>
+
+<label>
+
+Gender
+
+</label>
+
+<select
+name="gender"
+required>
+
+<option>
+
+Male
+
+</option>
+
+<option>
+
+Female
+
+</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>
+
+Date of Birth
+
+</label>
+
+<input
+type="date"
+name="date_of_birth"
+required>
+
+</div>
+
+<div>
+
+<label>
+
+Email
+
+</label>
+
+<input
+type="email"
+name="email"
+required>
+
+</div>
+
+<div>
+
+<label>
+
+Phone Number
+
+</label>
+
+<input
+type="text"
+name="phone_number"
+required>
+
+</div>
+
+<div class="full-width">
+
+<label>
+
+Biography
+
+</label>
+
+<textarea
+name="biography"
+rows="4"></textarea>
+
+</div>
+
+<div class="full-width">
+
+<label>
+
+Manifesto
+
+</label>
+
+<textarea
+name="manifesto"
+rows="5"></textarea>
+
+</div>
+
+<div class="full-width">
+
+<label>
+
+Photo URL
+
+</label>
+
+<input
+type="text"
+name="photo">
+
+</div>
+
+<div class="full-width">
+
+<button
+class="btn"
+type="submit">
+
+Register Candidate
+
+</button>
+
+</div>
+
+</div>
+
+</form>
+
+</section>
+
+<section class="card">
+
+<h3>
+
+Registered Candidates
+
+</h3>
+
+<table class="admin-table">
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Name</th>
+
+<th>Email</th>
+
+<th>Approved</th>
+
+<th>Active</th>
+
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{{range .Candidates}}
+
+<tr>
+
+<td>
+
+{{.ID}}
+
+</td>
+
+<td>
+
+{{.FirstName}} {{.LastName}}
+
+</td>
+
+<td>
+
+{{.Email}}
+
+</td>
+
+<td>
+
+{{if .IsApproved}}
+
+<span class="success">
+
+Approved
+
+</span>
+
+{{else}}
+
+<span class="warning">
+
+Pending
+
+</span>
+
+{{end}}
+
+</td>
+
+<td>
+
+{{if .IsActive}}
+
+<span class="success">
+
+Active
+
+</span>
+
+{{else}}
+
+<span class="danger">
+
+Inactive
+
+</span>
+
+{{end}}
+
+</td>
+
+<td>
+
+<a
+class="btn-small"
+href="/admin/candidate/approve?id={{.ID}}">
+
+Approve
+
+</a>
+
+<a
+class="btn-small"
+href="/admin/candidate/activate?id={{.ID}}">
+
+Activate
+
+</a>
+
+<a
+class="btn-small"
+href="/admin/candidate/deactivate?id={{.ID}}">
+
+Deactivate
+
+</a>
+
+<a
+class="btn-small danger"
+href="/admin/candidate/delete?id={{.ID}}">
+
+Delete
+
+</a>
+
+</td>
+
+</tr>
+
+{{else}}
+
+<tr>
+
+<td colspan="6">
+
+No candidates registered.
+
+</td>
+
+</tr>
+
+{{end}}
+
+</tbody>
+
+</table>
+
+</section>
+
+</main>
+
+</body>
+
+</html>
+```

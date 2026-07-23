@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Political Party Management
+    </title>
+
+    <link rel="stylesheet"
+          href="/static/css/style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="container">
+
+        <h1>
+            🇳🇬 Nigeria Online Voting System
+        </h1>
+
+        <nav>
+
+            <a href="/admin">
+                Admin Dashboard
+            </a>
+
+            <a href="/admin/elections">
+                Elections
+            </a>
+
+            <a href="/admin/parties">
+                Political Parties
+            </a>
+
+            <a href="/logout">
+                Logout
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+<main class="container">
+
+    <section class="page-title">
+
+        <h2>
+
+            Political Party Management
+
+        </h2>
+
+        <p>
+
+            Register and manage political parties participating in elections.
+
+        </p>
+
+    </section>
+
+    <!-- Create Party -->
+
+    <section class="card">
+
+        <h3>
+
+            Register Political Party
+
+        </h3>
+
+        <form
+            action="/admin/parties"
+            method="POST"
+            class="form-grid">
+
+            <div>
+
+                <label>
+
+                    Party Name
+
+                </label>
+
+                <input
+                    type="text"
+                    name="name"
+                    required>
+
+            </div>
+
+            <div>
+
+                <label>
+
+                    Abbreviation
+
+                </label>
+
+                <input
+                    type="text"
+                    name="abbreviation"
+                    required>
+
+            </div>
+
+            <div>
+
+                <label>
+
+                    Slogan
+
+                </label>
+
+                <input
+                    type="text"
+                    name="slogan">
+
+            </div>
+
+            <div>
+
+                <label>
+
+                    National Chairman
+
+                </label>
+
+                <input
+                    type="text"
+                    name="chairman">
+
+            </div>
+
+            <div>
+
+                <label>
+
+                    Headquarters
+
+                </label>
+
+                <input
+                    type="text"
+                    name="headquarters">
+
+            </div>
+
+            <div>
+
+                <label>
+
+                    Logo Filename
+
+                </label>
+
+                <input
+                    type="text"
+                    name="logo"
+                    placeholder="apc.png">
+
+            </div>
+
+            <div>
+
+                <label>
+
+                    Description
+
+                </label>
+
+                <textarea
+                    name="description"
+                    rows="4"></textarea>
+
+            </div>
+
+            <button
+                class="btn"
+                type="submit">
+
+                Register Party
+
+            </button>
+
+        </form>
+
+    </section>
+
+    <!-- Party List -->
+
+    <section class="card">
+
+        <h3>
+
+            Registered Political Parties
+
+        </h3>
+
+        <table class="admin-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Name</th>
+
+                    <th>Abbreviation</th>
+
+                    <th>Chairman</th>
+
+                    <th>Headquarters</th>
+
+                    <th>Status</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {{if .Parties}}
+
+                {{range .Parties}}
+
+                <tr>
+
+                    <td>{{.ID}}</td>
+
+                    <td>{{.Name}}</td>
+
+                    <td>{{.Abbreviation}}</td>
+
+                    <td>{{.Chairman}}</td>
+
+                    <td>{{.Headquarters}}</td>
+
+                    <td>
+
+                        {{if .IsActive}}
+
+                            <span class="badge badge-success">
+
+                                Active
+
+                            </span>
+
+                        {{else}}
+
+                            <span class="badge badge-danger">
+
+                                Inactive
+
+                            </span>
+
+                        {{end}}
+
+                    </td>
+
+                    <td>
+
+                        {{if .IsActive}}
+
+                        <a
+                            class="btn-small warning"
+                            href="/admin/party/deactivate?id={{.ID}}">
+
+                            Deactivate
+
+                        </a>
+
+                        {{else}}
+
+                        <a
+                            class="btn-small"
+                            href="/admin/party/activate?id={{.ID}}">
+
+                            Activate
+
+                        </a>
+
+                        {{end}}
+
+                        <a
+                            class="btn-small danger"
+                            href="/admin/party/delete?id={{.ID}}"
+                            onclick="return confirm('Delete this political party?');">
+
+                            Delete
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {{end}}
+
+            {{else}}
+
+                <tr>
+
+                    <td colspan="7">
+
+                        No political parties have been registered.
+
+                    </td>
+
+                </tr>
+
+            {{end}}
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+</main>
+
+<footer>
+
+    <div class="container">
+
+        <p>
+
+            © 2026 Nigeria Online Voting System
+
+        </p>
+
+    </div>
+
+</footer>
+
+</body>
+
+</html>

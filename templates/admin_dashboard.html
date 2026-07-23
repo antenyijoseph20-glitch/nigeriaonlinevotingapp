@@ -3,17 +3,17 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<title>
-Admin Dashboard
-</title>
+    <title>
+        Admin Dashboard
+    </title>
 
-<link rel="stylesheet"
-href="/static/css/style.css">
+    <link rel="stylesheet"
+          href="/static/css/style.css">
 
 </head>
 
@@ -21,87 +21,181 @@ href="/static/css/style.css">
 
 <header>
 
-<h1>
-🇳🇬 Nigeria Online Voting System
-</h1>
+    <div class="container">
 
-<nav>
+        <h1>
+            🇳🇬 Nigeria Online Voting System
+        </h1>
 
-<a href="/dashboard">
-Dashboard
-</a>
+        <nav>
 
-<a href="/logout">
-Logout
-</a>
+            <a href="/dashboard">
+                Dashboard
+            </a>
 
-</nav>
+            <a href="/admin/elections">
+                Elections
+            </a>
+
+            <a href="/admin/parties">
+                Political Parties
+            </a>
+
+            <a href="/logout">
+                Logout
+            </a>
+
+        </nav>
+
+    </div>
 
 </header>
 
-<main>
+<main class="container">
 
-<h2>
-Administrator Dashboard
-</h2>
+    <section class="page-title">
 
-<h3>
-Pending Verification Requests
-</h3>
+        <h2>
 
-<table>
+            Administrator Dashboard
 
-<tr>
+        </h2>
 
-<th>ID</th>
+        <p>
 
-<th>Name</th>
+            Manage voter verification, elections and political parties.
 
-<th>State</th>
+        </p>
 
-<th>Status</th>
+    </section>
 
-<th>Action</th>
+    <section class="dashboard-grid">
 
-</tr>
+        <div class="card">
 
-{{range .}}
+            <h3>
 
-<tr>
+                Election Management
 
-<td>{{.ID}}</td>
+            </h3>
 
-<td>{{.FullName}}</td>
+            <p>
 
-<td>{{.State}}</td>
+                Create, open, close and monitor elections.
 
-<td>{{.Status}}</td>
+            </p>
 
-<td>
+            <a
+                class="btn"
+                href="/admin/elections">
 
-<a href="/admin/verification?id={{.ID}}">
-View
-</a>
+                🗳 Manage Elections
 
-</td>
+            </a>
 
-</tr>
+        </div>
 
-{{else}}
+        <div class="card">
 
-<tr>
+            <h3>
 
-<td colspan="5">
+                Political Parties
 
-No verification requests.
+            </h3>
 
-</td>
+            <p>
 
-</tr>
+                Register and manage political parties.
 
-{{end}}
+            </p>
 
-</table>
+            <a
+                class="btn"
+                href="/admin/parties">
+
+                🏛 Manage Parties
+
+            </a>
+
+        </div>
+
+    </section>
+
+    <section class="card">
+
+        <h3>
+
+            Pending Verification Requests
+
+        </h3>
+
+        <table class="admin-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Full Name</th>
+
+                    <th>State</th>
+
+                    <th>Status</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {{range .}}
+
+                <tr>
+
+                    <td>{{.ID}}</td>
+
+                    <td>{{.FullName}}</td>
+
+                    <td>{{.State}}</td>
+
+                    <td>{{.Status}}</td>
+
+                    <td>
+
+                        <a
+                            class="btn-small"
+                            href="/admin/verification?id={{.ID}}">
+
+                            View
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+            {{else}}
+
+                <tr>
+
+                    <td colspan="5">
+
+                        No verification requests.
+
+                    </td>
+
+                </tr>
+
+            {{end}}
+
+            </tbody>
+
+        </table>
+
+    </section>
 
 </main>
 
