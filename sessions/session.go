@@ -9,24 +9,24 @@ const SessionCookieName = "session"
 
 // CreateSession creates a session cookie using the user's ID.
 func CreateSession(w http.ResponseWriter, userID int) {
-
 	http.SetCookie(w, &http.Cookie{
 		Name:     SessionCookieName,
 		Value:    strconv.Itoa(userID),
 		Path:     "/",
 		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
 	})
 }
 
-// DeleteSession removes the session cookie.
-func DeleteSession(w http.ResponseWriter) {
-
+// DeleteSession removes the current session cookie.
+func DeleteSession(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     SessionCookieName,
 		Value:    "",
 		Path:     "/",
 		MaxAge:   -1,
 		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
 	})
 }
 
@@ -37,7 +37,6 @@ func GetSession(r *http.Request) (*http.Cookie, error) {
 
 // GetSessionUserID returns the logged-in user's ID.
 func GetSessionUserID(r *http.Request) (int, error) {
-
 	cookie, err := r.Cookie(SessionCookieName)
 	if err != nil {
 		return 0, err

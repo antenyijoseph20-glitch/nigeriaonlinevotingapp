@@ -267,6 +267,33 @@ func main() {
 		),
 	)
 
+	http.HandleFunc(
+		"/admin/party/activate",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				partyHandler.Activate,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/admin/party/deactivate",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				partyHandler.Deactivate,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/admin/party/delete",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				partyHandler.Delete,
+			),
+		),
+	)
+
 	// =====================================
 	// Positions
 	// =====================================

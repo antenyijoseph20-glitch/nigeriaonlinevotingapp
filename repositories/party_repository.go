@@ -123,17 +123,45 @@ func (r *PartyJSONRepository) Create(
 ) error {
 
 	r.mutex.Lock()
-
 	defer r.mutex.Unlock()
 
 	parties, err := r.load()
 
 	if err != nil {
-
 		return err
 	}
 
-	party.ID = len(parties) + 1
+	// Prevent duplicate party name.
+	for _, existing := range parties {
+
+		if existing.Name == party.Name {
+			return errors.New(
+				"party name already exists",
+			)
+		}
+	}
+
+	// Prevent duplicate abbreviation.
+	for _, existing := range parties {
+
+		if existing.Abbreviation == party.Abbreviation {
+			return errors.New(
+				"party abbreviation already exists",
+			)
+		}
+	}
+
+	// Generate the next safe ID.
+	maxID := 0
+
+	for _, existing := range parties {
+
+		if existing.ID > maxID {
+			maxID = existing.ID
+		}
+	}
+
+	party.ID = maxID + 1
 
 	parties = append(
 		parties,

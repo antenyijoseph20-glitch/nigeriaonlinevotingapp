@@ -6,10 +6,24 @@ import (
 	"nigeriaonlinevoting/sessions"
 )
 
-// Logout destroys the current user session.
+// Logout handles user logout.
 func Logout(w http.ResponseWriter, r *http.Request) {
 
-	sessions.DeleteSession(w)
+	if r.Method != http.MethodGet {
+		http.Error(
+			w,
+			"Method Not Allowed",
+			http.StatusMethodNotAllowed,
+		)
+		return
+	}
 
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	sessions.DeleteSession(w, r)
+
+	http.Redirect(
+		w,
+		r,
+		"/login",
+		http.StatusSeeOther,
+	)
 }

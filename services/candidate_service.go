@@ -9,6 +9,7 @@ import (
 	"nigeriaonlinevoting/repositories"
 )
 
+// CandidateService handles candidate business rules.
 type CandidateService struct {
 	CandidateRepo repositories.CandidateRepository
 	ElectionRepo  repositories.ElectionRepository
@@ -43,6 +44,10 @@ func (s *CandidateService) CreateCandidate(
 	candidate models.Candidate,
 ) error {
 
+	// -------------------------------------
+	// Basic validation
+	// -------------------------------------
+
 	candidate.FirstName = strings.TrimSpace(candidate.FirstName)
 	candidate.LastName = strings.TrimSpace(candidate.LastName)
 	candidate.Email = strings.TrimSpace(candidate.Email)
@@ -70,26 +75,75 @@ func (s *CandidateService) CreateCandidate(
 		return errors.New("invalid position")
 	}
 
-	// Validate Election
-	if _, err := s.ElectionRepo.GetByID(candidate.ElectionID); err != nil {
-		return errors.New("selected election does not exist")
+	// -------------------------------------
+	// Validate dependencies
+	// -------------------------------------
+
+	election, err := s.ElectionRepo.GetByID(
+		candidate.ElectionID,
+	)
+
+	if err != nil || election == nil {
+		return errors.New(
+			"selected election does not exist",
+		)
 	}
 
-	// Validate Political Party
-	if _, err := s.PartyRepo.GetByID(candidate.PartyID); err != nil {
-		return errors.New("selected political party does not exist")
+	party, err := s.PartyRepo.GetByID(
+		candidate.PartyID,
+	)
+
+	if err != nil || party == nil {
+		return errors.New(
+			"selected political party does not exist",
+		)
 	}
 
-	// Validate Position
-	if _, err := s.PositionRepo.GetByID(candidate.PositionID); err != nil {
-		return errors.New("selected position does not exist")
+	position, err := s.PositionRepo.GetByID(
+		candidate.PositionID,
+	)
+
+	if err != nil || position == nil {
+		return errors.New(
+			"selected position does not exist",
+		)
 	}
+
+	// -------------------------------------
+	// Election state
+	// -------------------------------------
+
+	if election.Status == "closed" {
+		return errors.New(
+			"cannot add candidate to a closed election",
+		)
+	}
+
+	// -------------------------------------
+	// Position state
+	// -------------------------------------
+
+	if !position.IsActive {
+		return errors.New(
+			"selected position is inactive",
+		)
+	}
+
+	// -------------------------------------
+	// Candidate defaults
+	// -------------------------------------
 
 	candidate.IsApproved = false
 	candidate.IsActive = true
 
-	candidate.CreatedAt = time.Now()
-	candidate.UpdatedAt = time.Now()
+	now := time.Now()
+
+	candidate.CreatedAt = now
+	candidate.UpdatedAt = now
+
+	// -------------------------------------
+	// Store candidate
+	// -------------------------------------
 
 	return s.CandidateRepo.Create(candidate)
 }
@@ -102,7 +156,140 @@ func (s *CandidateService) UpdateCandidate(
 	candidate models.Candidate,
 ) error {
 
+	// -------------------------------------
+	// Validate ID
+	// -------------------------------------
+
+	if candidate.ID <= 0 {
+		return errors.New("invalid candidate ID")
+	}
+
+	// -------------------------------------
+	// Clean strings
+	// -------------------------------------
+
+	candidate.FirstName = strings.TrimSpace(candidate.FirstName)
+	candidate.LastName = strings.TrimSpace(candidate.LastName)
+	candidate.Email = strings.TrimSpace(candidate.Email)
+	candidate.PhoneNumber = strings.TrimSpace(candidate.PhoneNumber)
+	candidate.Biography = strings.TrimSpace(candidate.Biography)
+	candidate.Manifesto = strings.TrimSpace(candidate.Manifesto)
+
+	if candidate.FirstName == "" {
+		return errors.New("first name is required")
+	}
+
+	if candidate.LastName == "" {
+		return errors.New("last name is required")
+	}
+
+	// -------------------------------------
+	// Confirm candidate exists
+	// -------------------------------------
+
+	existing, err := s.CandidateRepo.GetByID(
+		candidate.ID,
+	)
+
+	if err != nil || existing == nil {
+		return errors.New(
+			"candidate not found",
+		)
+	}
+
+	// -------------------------------------
+	// Validate election
+	// -------------------------------------
+
+	if candidate.ElectionID <= 0 {
+		return errors.New("invalid election")
+	}
+
+	election, err := s.ElectionRepo.GetByID(
+		candidate.ElectionID,
+	)
+
+	if err != nil || election == nil {
+		return errors.New(
+			"selected election does not exist",
+		)
+	}
+
+	if election.Status == "closed" {
+		return errors.New(
+			"cannot update candidate in a closed election",
+		)
+	}
+
+	// -------------------------------------
+	// Validate party
+	// -------------------------------------
+
+	if candidate.PartyID <= 0 {
+		return errors.New("invalid political party")
+	}
+
+	party, err := s.PartyRepo.GetByID(
+		candidate.PartyID,
+	)
+
+	if err != nil || party == nil {
+		return errors.New(
+			"selected political party does not exist",
+		)
+	}
+
+	// -------------------------------------
+	// Validate position
+	// -------------------------------------
+
+	if candidate.PositionID <= 0 {
+		return errors.New("invalid position")
+	}
+
+	position, err := s.PositionRepo.GetByID(
+		candidate.PositionID,
+	)
+
+	if err != nil || position == nil {
+		return errors.New(
+			"selected position does not exist",
+		)
+	}
+
+	if !position.IsActive {
+		return errors.New(
+			"selected position is inactive",
+		)
+	}
+
+	// -------------------------------------
+	// Preserve approval status
+	// -------------------------------------
+
+	candidate.IsApproved = existing.IsApproved
+
+	// -------------------------------------
+	// Preserve active status
+	// -------------------------------------
+
+	candidate.IsActive = existing.IsActive
+
+	// -------------------------------------
+	// Preserve creation time
+	// -------------------------------------
+
+	candidate.CreatedAt = existing.CreatedAt
+
+	if candidate.CreatedAt.IsZero() {
+		candidate.CreatedAt = time.Now()
+	}
+
 	candidate.UpdatedAt = time.Now()
+
+	// -------------------------------------
+	// Save
+	// -------------------------------------
 
 	return s.CandidateRepo.Update(candidate)
 }
@@ -114,6 +301,12 @@ func (s *CandidateService) UpdateCandidate(
 func (s *CandidateService) DeleteCandidate(
 	id int,
 ) error {
+
+	if id <= 0 {
+		return errors.New(
+			"invalid candidate ID",
+		)
+	}
 
 	_, err := s.CandidateRepo.GetByID(id)
 
@@ -132,10 +325,54 @@ func (s *CandidateService) ApproveCandidate(
 	id int,
 ) error {
 
+	if id <= 0 {
+		return errors.New(
+			"invalid candidate ID",
+		)
+	}
+
 	candidate, err := s.CandidateRepo.GetByID(id)
 
-	if err != nil {
-		return err
+	if err != nil || candidate == nil {
+		return errors.New(
+			"candidate not found",
+		)
+	}
+
+	// Already approved is not a crash,
+	// but there is no need to update again.
+	if candidate.IsApproved {
+		return errors.New(
+			"candidate is already approved",
+		)
+	}
+
+	// Candidate must belong to a valid election.
+	election, err := s.ElectionRepo.GetByID(
+		candidate.ElectionID,
+	)
+
+	if err != nil || election == nil {
+		return errors.New(
+			"candidate election does not exist",
+		)
+	}
+
+	// Candidate must belong to a valid position.
+	position, err := s.PositionRepo.GetByID(
+		candidate.PositionID,
+	)
+
+	if err != nil || position == nil {
+		return errors.New(
+			"candidate position does not exist",
+		)
+	}
+
+	if !position.IsActive {
+		return errors.New(
+			"candidate position is inactive",
+		)
 	}
 
 	candidate.IsApproved = true
@@ -152,10 +389,24 @@ func (s *CandidateService) DeactivateCandidate(
 	id int,
 ) error {
 
+	if id <= 0 {
+		return errors.New(
+			"invalid candidate ID",
+		)
+	}
+
 	candidate, err := s.CandidateRepo.GetByID(id)
 
-	if err != nil {
-		return err
+	if err != nil || candidate == nil {
+		return errors.New(
+			"candidate not found",
+		)
+	}
+
+	if !candidate.IsActive {
+		return errors.New(
+			"candidate is already inactive",
+		)
 	}
 
 	candidate.IsActive = false
@@ -172,10 +423,31 @@ func (s *CandidateService) ActivateCandidate(
 	id int,
 ) error {
 
+	if id <= 0 {
+		return errors.New(
+			"invalid candidate ID",
+		)
+	}
+
 	candidate, err := s.CandidateRepo.GetByID(id)
 
-	if err != nil {
-		return err
+	if err != nil || candidate == nil {
+		return errors.New(
+			"candidate not found",
+		)
+	}
+
+	if candidate.IsActive {
+		return errors.New(
+			"candidate is already active",
+		)
+	}
+
+	// Do not activate an unapproved candidate.
+	if !candidate.IsApproved {
+		return errors.New(
+			"candidate must be approved before activation",
+		)
 	}
 
 	candidate.IsActive = true
@@ -192,6 +464,12 @@ func (s *CandidateService) GetCandidateByID(
 	id int,
 ) (*models.Candidate, error) {
 
+	if id <= 0 {
+		return nil, errors.New(
+			"invalid candidate ID",
+		)
+	}
+
 	return s.CandidateRepo.GetByID(id)
 }
 
@@ -201,7 +479,13 @@ func (s *CandidateService) GetCandidateByID(
 
 func (s *CandidateService) GetAllCandidates() []models.Candidate {
 
-	return s.CandidateRepo.GetAll()
+	candidates := s.CandidateRepo.GetAll()
+
+	if candidates == nil {
+		return []models.Candidate{}
+	}
+
+	return candidates
 }
 
 // =====================================
@@ -212,7 +496,19 @@ func (s *CandidateService) GetCandidatesByElection(
 	electionID int,
 ) []models.Candidate {
 
-	return s.CandidateRepo.GetByElectionID(electionID)
+	if electionID <= 0 {
+		return []models.Candidate{}
+	}
+
+	candidates := s.CandidateRepo.GetByElectionID(
+		electionID,
+	)
+
+	if candidates == nil {
+		return []models.Candidate{}
+	}
+
+	return candidates
 }
 
 // =====================================
@@ -223,7 +519,19 @@ func (s *CandidateService) GetCandidatesByParty(
 	partyID int,
 ) []models.Candidate {
 
-	return s.CandidateRepo.GetByPartyID(partyID)
+	if partyID <= 0 {
+		return []models.Candidate{}
+	}
+
+	candidates := s.CandidateRepo.GetByPartyID(
+		partyID,
+	)
+
+	if candidates == nil {
+		return []models.Candidate{}
+	}
+
+	return candidates
 }
 
 // =====================================
@@ -234,7 +542,19 @@ func (s *CandidateService) GetCandidatesByPosition(
 	positionID int,
 ) []models.Candidate {
 
-	return s.CandidateRepo.GetByPositionID(positionID)
+	if positionID <= 0 {
+		return []models.Candidate{}
+	}
+
+	candidates := s.CandidateRepo.GetByPositionID(
+		positionID,
+	)
+
+	if candidates == nil {
+		return []models.Candidate{}
+	}
+
+	return candidates
 }
 
 // =====================================
@@ -245,81 +565,83 @@ func (s *CandidateService) GetAllCandidateViews() []models.CandidateView {
 
 	candidates := s.CandidateRepo.GetAll()
 
-	views := []models.CandidateView{}
+	views := make(
+		[]models.CandidateView,
+		0,
+		len(candidates),
+	)
 
 	for _, candidate := range candidates {
 
 		view := models.CandidateView{
-
-			ID: candidate.ID,
-
-			FirstName: candidate.FirstName,
-
-			LastName: candidate.LastName,
-
-			Gender: candidate.Gender,
-
-			Email: candidate.Email,
-
+			ID:          candidate.ID,
+			FirstName:   candidate.FirstName,
+			LastName:    candidate.LastName,
+			Gender:      candidate.Gender,
+			Email:       candidate.Email,
 			PhoneNumber: candidate.PhoneNumber,
-
-			IsApproved: candidate.IsApproved,
-
-			IsActive: candidate.IsActive,
+			IsApproved:  candidate.IsApproved,
+			IsActive:    candidate.IsActive,
 		}
 
-		// -------------------------
+		// -------------------------------------
 		// Election
-		// -------------------------
+		// -------------------------------------
 
-		election, err := s.ElectionRepo.GetByID(
-			candidate.ElectionID,
-		)
+		if candidate.ElectionID > 0 {
 
-		if err == nil {
+			election, err := s.ElectionRepo.GetByID(
+				candidate.ElectionID,
+			)
 
-			view.ElectionName = election.Title
+			if err == nil && election != nil {
+				view.ElectionName = election.Title
+			} else {
+				view.ElectionName = "Unknown Election"
+			}
 
 		} else {
-
 			view.ElectionName = "Unknown Election"
-
 		}
 
-		// -------------------------
+		// -------------------------------------
 		// Political Party
-		// -------------------------
+		// -------------------------------------
 
-		party, err := s.PartyRepo.GetByID(
-			candidate.PartyID,
-		)
+		if candidate.PartyID > 0 {
 
-		if err == nil {
+			party, err := s.PartyRepo.GetByID(
+				candidate.PartyID,
+			)
 
-			view.PartyName = party.Name
+			if err == nil && party != nil {
+				view.PartyName = party.Name
+			} else {
+				view.PartyName = "Unknown Party"
+			}
 
 		} else {
-
 			view.PartyName = "Unknown Party"
-
 		}
 
-		// -------------------------
+		// -------------------------------------
 		// Position
-		// -------------------------
+		// -------------------------------------
 
-		position, err := s.PositionRepo.GetByID(
-			candidate.PositionID,
-		)
+		if candidate.PositionID > 0 {
 
-		if err == nil {
+			position, err := s.PositionRepo.GetByID(
+				candidate.PositionID,
+			)
 
-			view.PositionName = position.Name
+			if err == nil && position != nil {
+				view.PositionName = position.Name
+			} else {
+				view.PositionName = "Unknown Position"
+			}
 
 		} else {
-
 			view.PositionName = "Unknown Position"
-
 		}
 
 		views = append(

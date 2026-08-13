@@ -34,55 +34,82 @@ func (s *PositionService) CreatePosition(
 	position models.Position,
 ) error {
 
-	position.Name = strings.TrimSpace(
-		position.Name,
-	)
+	// -------------------------------------
+	// Normalize input
+	// -------------------------------------
 
-	position.Description = strings.TrimSpace(
-		position.Description,
-	)
+	position.Name = strings.TrimSpace(position.Name)
+	position.Description = strings.TrimSpace(position.Description)
+	position.Level = strings.TrimSpace(position.Level)
 
-	position.Level = strings.TrimSpace(
-		position.Level,
-	)
+	// -------------------------------------
+	// Validate required fields
+	// -------------------------------------
 
 	if position.Name == "" {
-
 		return errors.New(
 			"position name is required",
 		)
 	}
 
 	if position.Level == "" {
-
 		return errors.New(
 			"position level is required",
 		)
 	}
 
 	if position.Seats <= 0 {
-
 		return errors.New(
 			"number of seats must be greater than zero",
 		)
 	}
 
-	_, err := s.PositionRepo.GetByName(
+	// -------------------------------------
+	// Validate level
+	// -------------------------------------
+
+	if !isValidPositionLevel(position.Level) {
+		return errors.New(
+			"invalid position level",
+		)
+	}
+
+	// -------------------------------------
+	// Check duplicate position
+	// -------------------------------------
+
+	existing, err := s.PositionRepo.GetByName(
 		position.Name,
 	)
 
-	if err == nil {
-
+	if err == nil && existing != nil {
 		return errors.New(
 			"position already exists",
 		)
 	}
 
+	// A repository error other than "not found"
+	// should not be silently ignored.
+	if err != nil &&
+		err.Error() != "position not found" {
+
+		return err
+	}
+
+	// -------------------------------------
+	// Set system-controlled fields
+	// -------------------------------------
+
 	position.IsActive = true
 
-	position.CreatedAt = time.Now()
+	now := time.Now()
 
-	position.UpdatedAt = time.Now()
+	position.CreatedAt = now
+	position.UpdatedAt = now
+
+	// -------------------------------------
+	// Persist
+	// -------------------------------------
 
 	return s.PositionRepo.Create(
 		position,
@@ -97,40 +124,98 @@ func (s *PositionService) UpdatePosition(
 	position models.Position,
 ) error {
 
-	position.Name = strings.TrimSpace(
-		position.Name,
-	)
+	// -------------------------------------
+	// Validate ID
+	// -------------------------------------
 
-	position.Description = strings.TrimSpace(
-		position.Description,
-	)
+	if position.ID <= 0 {
+		return errors.New(
+			"invalid position ID",
+		)
+	}
 
-	position.Level = strings.TrimSpace(
-		position.Level,
-	)
+	// -------------------------------------
+	// Normalize input
+	// -------------------------------------
+
+	position.Name = strings.TrimSpace(position.Name)
+	position.Description = strings.TrimSpace(position.Description)
+	position.Level = strings.TrimSpace(position.Level)
+
+	// -------------------------------------
+	// Validate required fields
+	// -------------------------------------
 
 	if position.Name == "" {
-
 		return errors.New(
 			"position name is required",
 		)
 	}
 
 	if position.Level == "" {
-
 		return errors.New(
 			"position level is required",
 		)
 	}
 
 	if position.Seats <= 0 {
-
 		return errors.New(
 			"number of seats must be greater than zero",
 		)
 	}
 
+	if !isValidPositionLevel(position.Level) {
+		return errors.New(
+			"invalid position level",
+		)
+	}
+
+	// -------------------------------------
+	// Get existing position
+	// -------------------------------------
+
+	existing, err := s.PositionRepo.GetByID(
+		position.ID,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	// -------------------------------------
+	// Prevent duplicate names
+	// -------------------------------------
+
+	other, err := s.PositionRepo.GetByName(
+		position.Name,
+	)
+
+	if err == nil &&
+		other != nil &&
+		other.ID != position.ID {
+
+		return errors.New(
+			"position name already exists",
+		)
+	}
+
+	if err != nil &&
+		err.Error() != "position not found" {
+
+		return err
+	}
+
+	// -------------------------------------
+	// Preserve system-controlled fields
+	// -------------------------------------
+
+	position.CreatedAt = existing.CreatedAt
+
 	position.UpdatedAt = time.Now()
+
+	// -------------------------------------
+	// Persist
+	// -------------------------------------
 
 	return s.PositionRepo.Update(
 		position,
@@ -145,17 +230,26 @@ func (s *PositionService) ActivatePosition(
 	id int,
 ) error {
 
+	if id <= 0 {
+		return errors.New(
+			"invalid position ID",
+		)
+	}
+
 	position, err := s.PositionRepo.GetByID(
 		id,
 	)
 
 	if err != nil {
-
 		return err
 	}
 
-	position.IsActive = true
+	// Already active is not an error.
+	if position.IsActive {
+		return nil
+	}
 
+	position.IsActive = true
 	position.UpdatedAt = time.Now()
 
 	return s.PositionRepo.Update(
@@ -171,17 +265,26 @@ func (s *PositionService) DeactivatePosition(
 	id int,
 ) error {
 
+	if id <= 0 {
+		return errors.New(
+			"invalid position ID",
+		)
+	}
+
 	position, err := s.PositionRepo.GetByID(
 		id,
 	)
 
 	if err != nil {
-
 		return err
 	}
 
-	position.IsActive = false
+	// Already inactive is not an error.
+	if !position.IsActive {
+		return nil
+	}
 
+	position.IsActive = false
 	position.UpdatedAt = time.Now()
 
 	return s.PositionRepo.Update(
@@ -197,13 +300,26 @@ func (s *PositionService) DeletePosition(
 	id int,
 ) error {
 
-	_, err := s.PositionRepo.GetByID(
+	if id <= 0 {
+		return errors.New(
+			"invalid position ID",
+		)
+	}
+
+	position, err := s.PositionRepo.GetByID(
 		id,
 	)
 
 	if err != nil {
-
 		return err
+	}
+
+	// Active positions should be deactivated
+	// instead of being deleted.
+	if position.IsActive {
+		return errors.New(
+			"cannot delete an active position",
+		)
 	}
 
 	return s.PositionRepo.Delete(
@@ -219,6 +335,12 @@ func (s *PositionService) GetPositionByID(
 	id int,
 ) (*models.Position, error) {
 
+	if id <= 0 {
+		return nil, errors.New(
+			"invalid position ID",
+		)
+	}
+
 	return s.PositionRepo.GetByID(
 		id,
 	)
@@ -232,6 +354,14 @@ func (s *PositionService) GetPositionByName(
 	name string,
 ) (*models.Position, error) {
 
+	name = strings.TrimSpace(name)
+
+	if name == "" {
+		return nil, errors.New(
+			"position name is required",
+		)
+	}
+
 	return s.PositionRepo.GetByName(
 		name,
 	)
@@ -244,4 +374,33 @@ func (s *PositionService) GetPositionByName(
 func (s *PositionService) GetAllPositions() []models.Position {
 
 	return s.PositionRepo.GetAll()
+}
+
+// =====================================
+// Position Level Validation
+// =====================================
+
+func isValidPositionLevel(
+	level string,
+) bool {
+
+	switch strings.ToLower(
+		strings.TrimSpace(level),
+	) {
+
+	case "federal":
+		return true
+
+	case "state":
+		return true
+
+	case "local":
+		return true
+
+	case "local government":
+		return true
+
+	default:
+		return false
+	}
 }

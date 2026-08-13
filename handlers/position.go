@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"nigeriaonlinevoting/models"
 	"nigeriaonlinevoting/services"
@@ -13,6 +14,10 @@ type PositionHandler struct {
 	PositionService *services.PositionService
 }
 
+// =====================================
+// Constructor
+// =====================================
+
 func NewPositionHandler(
 	service *services.PositionService,
 ) *PositionHandler {
@@ -21,6 +26,10 @@ func NewPositionHandler(
 		PositionService: service,
 	}
 }
+
+// =====================================
+// Page Data
+// =====================================
 
 type PositionPageData struct {
 	Positions []models.Position
@@ -35,97 +44,38 @@ func (h *PositionHandler) PositionDashboard(
 	r *http.Request,
 ) {
 
+	if h.PositionService == nil {
+		http.Error(
+			w,
+			"Position service is unavailable.",
+			http.StatusInternalServerError,
+		)
+
+		return
+	}
+
 	switch r.Method {
 
 	case http.MethodGet:
 
-		data := PositionPageData{
-
-			Positions: h.PositionService.GetAllPositions(),
-		}
-
-		tmpl, err := template.ParseFiles(
-			"templates/positions.html",
-		)
-
-		if err != nil {
-
-			http.Error(
-				w,
-				"Unable to load positions page.",
-				http.StatusInternalServerError,
-			)
-
-			return
-		}
-
-		err = tmpl.Execute(
+		h.showPositionDashboard(
 			w,
-			data,
+			r,
 		)
-
-		if err != nil {
-
-			http.Error(
-				w,
-				"Unable to render positions page.",
-				http.StatusInternalServerError,
-			)
-
-			return
-		}
 
 	case http.MethodPost:
 
-		seats, err := strconv.Atoi(
-			r.FormValue("seats"),
-		)
-
-		if err != nil {
-
-			http.Error(
-				w,
-				"Invalid number of seats.",
-				http.StatusBadRequest,
-			)
-
-			return
-		}
-
-		position := models.Position{
-
-			Name: r.FormValue("name"),
-
-			Description: r.FormValue("description"),
-
-			Level: r.FormValue("level"),
-
-			Seats: seats,
-		}
-
-		err = h.PositionService.CreatePosition(
-			position,
-		)
-
-		if err != nil {
-
-			http.Error(
-				w,
-				err.Error(),
-				http.StatusBadRequest,
-			)
-
-			return
-		}
-
-		http.Redirect(
+		h.createPosition(
 			w,
 			r,
-			"/admin/positions",
-			http.StatusSeeOther,
 		)
 
 	default:
+
+		w.Header().Set(
+			"Allow",
+			"GET, POST",
+		)
 
 		http.Error(
 			w,
@@ -133,6 +83,136 @@ func (h *PositionHandler) PositionDashboard(
 			http.StatusMethodNotAllowed,
 		)
 	}
+}
+
+// =====================================
+// Show Position Dashboard
+// =====================================
+
+func (h *PositionHandler) showPositionDashboard(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+
+	data := PositionPageData{
+		Positions: h.PositionService.GetAllPositions(),
+	}
+
+	tmpl, err := template.ParseFiles(
+		"templates/positions.html",
+	)
+
+	if err != nil {
+
+		http.Error(
+			w,
+			"Unable to load positions page.",
+			http.StatusInternalServerError,
+		)
+
+		return
+	}
+
+	if err := tmpl.Execute(
+		w,
+		data,
+	); err != nil {
+
+		http.Error(
+			w,
+			"Unable to render positions page.",
+			http.StatusInternalServerError,
+		)
+
+		return
+	}
+}
+
+// =====================================
+// Create Position
+// =====================================
+
+func (h *PositionHandler) createPosition(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+
+	if err := r.ParseForm(); err != nil {
+
+		http.Error(
+			w,
+			"Invalid form submission.",
+			http.StatusBadRequest,
+		)
+
+		return
+	}
+
+	seatsText := strings.TrimSpace(
+		r.FormValue("seats"),
+	)
+
+	if seatsText == "" {
+
+		http.Error(
+			w,
+			"Number of seats is required.",
+			http.StatusBadRequest,
+		)
+
+		return
+	}
+
+	seats, err := strconv.Atoi(
+		seatsText,
+	)
+
+	if err != nil {
+
+		http.Error(
+			w,
+			"Invalid number of seats.",
+			http.StatusBadRequest,
+		)
+
+		return
+	}
+
+	position := models.Position{
+		Name: strings.TrimSpace(
+			r.FormValue("name"),
+		),
+
+		Description: strings.TrimSpace(
+			r.FormValue("description"),
+		),
+
+		Level: strings.TrimSpace(
+			r.FormValue("level"),
+		),
+
+		Seats: seats,
+	}
+
+	if err := h.PositionService.CreatePosition(
+		position,
+	); err != nil {
+
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusBadRequest,
+		)
+
+		return
+	}
+
+	http.Redirect(
+		w,
+		r,
+		"/admin/positions",
+		http.StatusSeeOther,
+	)
 }
 
 // =====================================
@@ -144,26 +224,40 @@ func (h *PositionHandler) Activate(
 	r *http.Request,
 ) {
 
-	id, err := strconv.Atoi(
-		r.URL.Query().Get("id"),
+	if r.Method != http.MethodPost {
+
+		w.Header().Set(
+			"Allow",
+			http.MethodPost,
+		)
+
+		http.Error(
+			w,
+			"Method Not Allowed",
+			http.StatusMethodNotAllowed,
+		)
+
+		return
+	}
+
+	id, err := getPositionID(
+		r,
 	)
 
 	if err != nil {
 
 		http.Error(
 			w,
-			"Invalid Position ID",
+			err.Error(),
 			http.StatusBadRequest,
 		)
 
 		return
 	}
 
-	err = h.PositionService.ActivatePosition(
+	if err := h.PositionService.ActivatePosition(
 		id,
-	)
-
-	if err != nil {
+	); err != nil {
 
 		http.Error(
 			w,
@@ -191,26 +285,40 @@ func (h *PositionHandler) Deactivate(
 	r *http.Request,
 ) {
 
-	id, err := strconv.Atoi(
-		r.URL.Query().Get("id"),
+	if r.Method != http.MethodPost {
+
+		w.Header().Set(
+			"Allow",
+			http.MethodPost,
+		)
+
+		http.Error(
+			w,
+			"Method Not Allowed",
+			http.StatusMethodNotAllowed,
+		)
+
+		return
+	}
+
+	id, err := getPositionID(
+		r,
 	)
 
 	if err != nil {
 
 		http.Error(
 			w,
-			"Invalid Position ID",
+			err.Error(),
 			http.StatusBadRequest,
 		)
 
 		return
 	}
 
-	err = h.PositionService.DeactivatePosition(
+	if err := h.PositionService.DeactivatePosition(
 		id,
-	)
-
-	if err != nil {
+	); err != nil {
 
 		http.Error(
 			w,
@@ -238,26 +346,40 @@ func (h *PositionHandler) Delete(
 	r *http.Request,
 ) {
 
-	id, err := strconv.Atoi(
-		r.URL.Query().Get("id"),
+	if r.Method != http.MethodPost {
+
+		w.Header().Set(
+			"Allow",
+			http.MethodPost,
+		)
+
+		http.Error(
+			w,
+			"Method Not Allowed",
+			http.StatusMethodNotAllowed,
+		)
+
+		return
+	}
+
+	id, err := getPositionID(
+		r,
 	)
 
 	if err != nil {
 
 		http.Error(
 			w,
-			"Invalid Position ID",
+			err.Error(),
 			http.StatusBadRequest,
 		)
 
 		return
 	}
 
-	err = h.PositionService.DeletePosition(
+	if err := h.PositionService.DeletePosition(
 		id,
-	)
-
-	if err != nil {
+	); err != nil {
 
 		http.Error(
 			w,
@@ -274,4 +396,35 @@ func (h *PositionHandler) Delete(
 		"/admin/positions",
 		http.StatusSeeOther,
 	)
+}
+
+// =====================================
+// Get Position ID
+// =====================================
+
+func getPositionID(
+	r *http.Request,
+) (int, error) {
+
+	idText := strings.TrimSpace(
+		r.URL.Query().Get("id"),
+	)
+
+	if idText == "" {
+		return 0, strconv.ErrSyntax
+	}
+
+	id, err := strconv.Atoi(
+		idText,
+	)
+
+	if err != nil {
+		return 0, err
+	}
+
+	if id <= 0 {
+		return 0, strconv.ErrSyntax
+	}
+
+	return id, nil
 }

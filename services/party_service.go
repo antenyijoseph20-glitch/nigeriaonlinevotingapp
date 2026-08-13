@@ -13,7 +13,9 @@ type PartyService struct {
 	PartyRepo repositories.PartyRepository
 }
 
+// =====================================
 // Constructor
+// =====================================
 
 func NewPartyService(
 	repo repositories.PartyRepository,
@@ -24,7 +26,9 @@ func NewPartyService(
 	}
 }
 
-// CreateParty
+// =====================================
+// Create Party
+// =====================================
 
 func (s *PartyService) CreateParty(
 	party models.Party,
@@ -42,6 +46,26 @@ func (s *PartyService) CreateParty(
 		party.Slogan,
 	)
 
+	party.Logo = strings.TrimSpace(
+		party.Logo,
+	)
+
+	party.Chairman = strings.TrimSpace(
+		party.Chairman,
+	)
+
+	party.Headquarters = strings.TrimSpace(
+		party.Headquarters,
+	)
+
+	party.Description = strings.TrimSpace(
+		party.Description,
+	)
+
+	// -------------------------------------
+	// Validate required fields
+	// -------------------------------------
+
 	if party.Name == "" {
 
 		return errors.New(
@@ -56,18 +80,24 @@ func (s *PartyService) CreateParty(
 		)
 	}
 
-	// Check duplicate name
+	// -------------------------------------
+	// Check duplicate party name
+	// -------------------------------------
 
-	existing, _ := s.PartyRepo.GetByName(
+	existing, err := s.PartyRepo.GetByName(
 		party.Name,
 	)
 
-	if existing != nil {
+	if err == nil && existing != nil {
 
 		return errors.New(
-			"party already exists",
+			"party name already exists",
 		)
 	}
+
+	// -------------------------------------
+	// Set default values
+	// -------------------------------------
 
 	party.IsActive = true
 
@@ -75,36 +105,142 @@ func (s *PartyService) CreateParty(
 
 	party.UpdatedAt = time.Now()
 
+	// -------------------------------------
+	// Save party
+	// -------------------------------------
+
 	return s.PartyRepo.Create(
 		party,
 	)
 }
 
-// UpdateParty
+// =====================================
+// Update Party
+// =====================================
 
 func (s *PartyService) UpdateParty(
 	party models.Party,
 ) error {
 
+	party.Name = strings.TrimSpace(
+		party.Name,
+	)
+
+	party.Abbreviation = strings.TrimSpace(
+		party.Abbreviation,
+	)
+
+	party.Slogan = strings.TrimSpace(
+		party.Slogan,
+	)
+
+	party.Logo = strings.TrimSpace(
+		party.Logo,
+	)
+
+	party.Chairman = strings.TrimSpace(
+		party.Chairman,
+	)
+
+	party.Headquarters = strings.TrimSpace(
+		party.Headquarters,
+	)
+
+	party.Description = strings.TrimSpace(
+		party.Description,
+	)
+
+	// -------------------------------------
+	// Validate ID
+	// -------------------------------------
+
+	if party.ID <= 0 {
+
+		return errors.New(
+			"invalid party ID",
+		)
+	}
+
+	// -------------------------------------
+	// Validate required fields
+	// -------------------------------------
+
+	if party.Name == "" {
+
+		return errors.New(
+			"party name is required",
+		)
+	}
+
+	if party.Abbreviation == "" {
+
+		return errors.New(
+			"party abbreviation is required",
+		)
+	}
+
+	// -------------------------------------
+	// Verify party exists
+	// -------------------------------------
+
+	existing, err := s.PartyRepo.GetByID(
+		party.ID,
+	)
+
+	if err != nil {
+
+		return err
+	}
+
+	// -------------------------------------
+	// Preserve original creation time
+	// -------------------------------------
+
+	party.CreatedAt = existing.CreatedAt
+
 	party.UpdatedAt = time.Now()
+
+	// -------------------------------------
+	// Update party
+	// -------------------------------------
 
 	return s.PartyRepo.Update(
 		party,
 	)
 }
 
-// DeleteParty
+// =====================================
+// Delete Party
+// =====================================
 
 func (s *PartyService) DeleteParty(
 	id int,
 ) error {
+
+	if id <= 0 {
+
+		return errors.New(
+			"invalid party ID",
+		)
+	}
+
+	_, err := s.PartyRepo.GetByID(
+		id,
+	)
+
+	if err != nil {
+
+		return err
+	}
 
 	return s.PartyRepo.Delete(
 		id,
 	)
 }
 
-// GetPartyByID
+// =====================================
+// Get Party By ID
+// =====================================
 
 func (s *PartyService) GetPartyByID(
 	id int,
@@ -115,14 +251,18 @@ func (s *PartyService) GetPartyByID(
 	)
 }
 
-// GetAllParties
+// =====================================
+// Get All Parties
+// =====================================
 
 func (s *PartyService) GetAllParties() []models.Party {
 
 	return s.PartyRepo.GetAll()
 }
 
-// ActivateParty
+// =====================================
+// Activate Party
+// =====================================
 
 func (s *PartyService) ActivateParty(
 	id int,
@@ -146,7 +286,9 @@ func (s *PartyService) ActivateParty(
 	)
 }
 
-// DeactivateParty
+// =====================================
+// Deactivate Party
+// =====================================
 
 func (s *PartyService) DeactivateParty(
 	id int,
