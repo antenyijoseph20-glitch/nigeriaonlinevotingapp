@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"html/template"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -33,12 +34,9 @@ func NewCandidateHandler(
 
 type CandidatePageData struct {
 	Candidates []models.CandidateView
-
-	Elections []models.Election
-
-	Parties []models.Party
-
-	Positions []models.Position
+	Elections  []models.Election
+	Parties    []models.Party
+	Positions  []models.Position
 }
 
 func (h *CandidateHandler) CandidateDashboard(
@@ -51,14 +49,10 @@ func (h *CandidateHandler) CandidateDashboard(
 	case http.MethodGet:
 
 		data := CandidatePageData{
-
 			Candidates: h.CandidateService.GetAllCandidateViews(),
-
-			Elections: h.ElectionService.GetAllElections(),
-
-			Parties: h.PartyService.GetAllParties(),
-
-			Positions: h.PositionService.GetAllPositions(),
+			Elections:  h.ElectionService.GetAllElections(),
+			Parties:    h.PartyService.GetAllParties(),
+			Positions:  h.PositionService.GetAllPositions(),
 		}
 
 		tmpl, err := template.ParseFiles(
@@ -66,6 +60,11 @@ func (h *CandidateHandler) CandidateDashboard(
 		)
 
 		if err != nil {
+
+			log.Printf(
+				"ERROR loading candidates.html: %v",
+				err,
+			)
 
 			http.Error(
 				w,
@@ -82,6 +81,11 @@ func (h *CandidateHandler) CandidateDashboard(
 		)
 
 		if err != nil {
+
+			log.Printf(
+				"ERROR rendering candidates.html: %v",
+				err,
+			)
 
 			http.Error(
 				w,
@@ -140,30 +144,18 @@ func (h *CandidateHandler) CandidateDashboard(
 		}
 
 		candidate := models.Candidate{
-
-			ElectionID: electionID,
-
-			PartyID: partyID,
-
-			PositionID: positionID,
-
-			FirstName: r.FormValue("first_name"),
-
-			LastName: r.FormValue("last_name"),
-
-			Gender: r.FormValue("gender"),
-
+			ElectionID:  electionID,
+			PartyID:     partyID,
+			PositionID:  positionID,
+			FirstName:   r.FormValue("first_name"),
+			LastName:    r.FormValue("last_name"),
+			Gender:      r.FormValue("gender"),
 			DateOfBirth: r.FormValue("date_of_birth"),
-
-			Email: r.FormValue("email"),
-
+			Email:       r.FormValue("email"),
 			PhoneNumber: r.FormValue("phone_number"),
-
-			Biography: r.FormValue("biography"),
-
-			Manifesto: r.FormValue("manifesto"),
-
-			Photo: r.FormValue("photo"),
+			Biography:   r.FormValue("biography"),
+			Manifesto:   r.FormValue("manifesto"),
+			Photo:       r.FormValue("photo"),
 		}
 
 		err = h.CandidateService.CreateCandidate(
@@ -218,9 +210,7 @@ func (h *CandidateHandler) Approve(
 		return
 	}
 
-	err = h.CandidateService.ApproveCandidate(
-		id,
-	)
+	err = h.CandidateService.ApproveCandidate(id)
 
 	if err != nil {
 
@@ -261,9 +251,7 @@ func (h *CandidateHandler) Activate(
 		return
 	}
 
-	err = h.CandidateService.ActivateCandidate(
-		id,
-	)
+	err = h.CandidateService.ActivateCandidate(id)
 
 	if err != nil {
 
@@ -304,9 +292,7 @@ func (h *CandidateHandler) Deactivate(
 		return
 	}
 
-	err = h.CandidateService.DeactivateCandidate(
-		id,
-	)
+	err = h.CandidateService.DeactivateCandidate(id)
 
 	if err != nil {
 
@@ -347,9 +333,7 @@ func (h *CandidateHandler) Delete(
 		return
 	}
 
-	err = h.CandidateService.DeleteCandidate(
-		id,
-	)
+	err = h.CandidateService.DeleteCandidate(id)
 
 	if err != nil {
 

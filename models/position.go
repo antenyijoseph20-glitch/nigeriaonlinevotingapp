@@ -5,38 +5,38 @@ import "time"
 // Position represents an elective office
 // that candidates can contest for.
 type Position struct {
+	// Unique identifier.
+	ID int `json:"id"`
 
-	// Unique identifier
-	ID int
-
-	// Name of the position
+	// Name of the position.
 	// Example:
 	// President
 	// Governor
 	// Senator
 	// Councillor
-	Name string
+	Name string `json:"name"`
 
-	// Brief description of the position
-	Description string
+	// Brief description of the position.
+	Description string `json:"description"`
 
-	// Government level
+	// Government level.
 	// Federal
 	// State
-	// Local Government
-	Level string
+	// Local
+	Level string `json:"level"`
 
-	// Number of available seats
+	// Number of available seats.
 	// Example:
 	// President = 1
 	// Governor = 1
 	// Senator = 3
-	Seats int
+	Seats int `json:"seats"`
 
-	// Whether the position is active
-	IsActive bool
+	// Whether the position is active.
+	IsActive bool `json:"is_active"`
 
-	// Record timestamps
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	// Record timestamps.
+	CreatedAt time.Time `json:"created_at"`
+
+	UpdatedAt time.Time `json:"updated_at"`
 }

@@ -11,16 +11,6 @@
     },
     {
         "id": 2,
-        "name": "Vice President",
-        "description": "Vice President of the Federal Republic of Nigeria.",
-        "level": "Federal",
-        "seats": 1,
-        "is_active": true,
-        "created_at": "2026-08-14T00:00:00Z",
-        "updated_at": "2026-08-14T00:00:00Z"
-    },
-    {
-        "id": 3,
         "name": "Governor",
         "description": "Governor of a Nigerian state.",
         "level": "State",
@@ -30,17 +20,7 @@
         "updated_at": "2026-08-14T00:00:00Z"
     },
     {
-        "id": 4,
-        "name": "Deputy Governor",
-        "description": "Deputy Governor of a Nigerian state.",
-        "level": "State",
-        "seats": 1,
-        "is_active": true,
-        "created_at": "2026-08-14T00:00:00Z",
-        "updated_at": "2026-08-14T00:00:00Z"
-    },
-    {
-        "id": 5,
+        "id": 3,
         "name": "Senator",
         "description": "Member of the Nigerian Senate.",
         "level": "Federal",
@@ -50,7 +30,7 @@
         "updated_at": "2026-08-14T00:00:00Z"
     },
     {
-        "id": 6,
+        "id": 4,
         "name": "House of Representatives Member",
         "description": "Member of the Federal House of Representatives.",
         "level": "Federal",
@@ -60,7 +40,7 @@
         "updated_at": "2026-08-14T00:00:00Z"
     },
     {
-        "id": 7,
+        "id": 5,
         "name": "State House of Assembly Member",
         "description": "Member of a Nigerian State House of Assembly.",
         "level": "State",
@@ -70,7 +50,7 @@
         "updated_at": "2026-08-14T00:00:00Z"
     },
     {
-        "id": 8,
+        "id": 6,
         "name": "Local Government Chairman",
         "description": "Chairman of a Local Government Area.",
         "level": "Local",
@@ -80,7 +60,7 @@
         "updated_at": "2026-08-14T00:00:00Z"
     },
     {
-        "id": 9,
+        "id": 7,
         "name": "Councillor",
         "description": "Councillor representing a ward in a Local Government Area.",
         "level": "Local",

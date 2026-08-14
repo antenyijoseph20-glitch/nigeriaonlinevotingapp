@@ -137,13 +137,25 @@ func main() {
 	// Public Routes
 	// =====================================
 
-	http.HandleFunc("/", handlers.HomeHandler)
+	http.HandleFunc(
+		"/",
+		handlers.HomeHandler,
+	)
 
-	http.HandleFunc("/register", authHandler.Register)
+	http.HandleFunc(
+		"/register",
+		authHandler.Register,
+	)
 
-	http.HandleFunc("/login", authHandler.Login)
+	http.HandleFunc(
+		"/login",
+		authHandler.Login,
+	)
 
-	http.HandleFunc("/logout", handlers.Logout)
+	http.HandleFunc(
+		"/logout",
+		handlers.Logout,
+	)
 
 	// =====================================
 	// User Routes
@@ -184,7 +196,7 @@ func main() {
 	)
 
 	// =====================================
-	// Verification
+	// Admin Verification
 	// =====================================
 
 	http.HandleFunc(
@@ -303,6 +315,33 @@ func main() {
 		middleware.RequireAuth(
 			middleware.RequireAdmin(
 				positionHandler.PositionDashboard,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/admin/position/activate",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				positionHandler.Activate,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/admin/position/deactivate",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				positionHandler.Deactivate,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/admin/position/delete",
+		middleware.RequireAuth(
+			middleware.RequireAdmin(
+				positionHandler.Delete,
 			),
 		),
 	)

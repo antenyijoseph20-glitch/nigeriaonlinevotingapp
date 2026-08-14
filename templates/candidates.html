@@ -1,0 +1,595 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Candidate Management
+    </title>
+
+    <link rel="stylesheet"
+          href="/static/css/style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="container">
+
+        <h1>
+            🇳🇬 Nigeria Online Voting System
+        </h1>
+
+        <nav>
+
+            <a href="/admin">
+                Admin Dashboard
+            </a>
+
+            <a href="/admin/elections">
+                Elections
+            </a>
+
+            <a href="/admin/parties">
+                Political Parties
+            </a>
+
+            <a href="/admin/positions">
+                Positions
+            </a>
+
+            <a href="/admin/candidates">
+                Candidates
+            </a>
+
+            <a href="/logout">
+                Logout
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <section class="page-title">
+
+        <h2>
+            Candidate Management
+        </h2>
+
+        <p>
+            Register, review, approve and manage candidates
+            participating in Nigerian elections.
+        </p>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- Register Candidate -->
+    <!-- ========================================= -->
+
+    <section class="card">
+
+        <h3>
+            Register Candidate
+        </h3>
+
+        <form
+            action="/admin/candidates"
+            method="POST"
+            class="form-grid">
+
+
+            <!-- Election -->
+
+            <div>
+
+                <label for="election_id">
+                    Election
+                </label>
+
+                <select
+                    id="election_id"
+                    name="election_id"
+                    required>
+
+                    <option value="">
+                        Select Election
+                    </option>
+
+                    {{range .Elections}}
+
+                    <option value="{{.ID}}">
+                        {{.Title}}
+                    </option>
+
+                    {{end}}
+
+                </select>
+
+            </div>
+
+
+            <!-- Political Party -->
+
+            <div>
+
+                <label for="party_id">
+                    Political Party
+                </label>
+
+                <select
+                    id="party_id"
+                    name="party_id"
+                    required>
+
+                    <option value="">
+                        Select Political Party
+                    </option>
+
+                    {{range .Parties}}
+
+                    {{if .IsActive}}
+
+                    <option value="{{.ID}}">
+                        {{.Name}} ({{.Abbreviation}})
+                    </option>
+
+                    {{end}}
+
+                    {{end}}
+
+                </select>
+
+            </div>
+
+
+            <!-- Position -->
+
+            <div>
+
+                <label for="position_id">
+                    Position
+                </label>
+
+                <select
+                    id="position_id"
+                    name="position_id"
+                    required>
+
+                    <option value="">
+                        Select Position
+                    </option>
+
+                    {{range .Positions}}
+
+                    {{if .IsActive}}
+
+                    <option value="{{.ID}}">
+                        {{.Name}}
+                    </option>
+
+                    {{end}}
+
+                    {{end}}
+
+                </select>
+
+            </div>
+
+
+            <!-- First Name -->
+
+            <div>
+
+                <label for="first_name">
+                    First Name
+                </label>
+
+                <input
+                    id="first_name"
+                    type="text"
+                    name="first_name"
+                    required>
+
+            </div>
+
+
+            <!-- Last Name -->
+
+            <div>
+
+                <label for="last_name">
+                    Last Name
+                </label>
+
+                <input
+                    id="last_name"
+                    type="text"
+                    name="last_name"
+                    required>
+
+            </div>
+
+
+            <!-- Gender -->
+
+            <div>
+
+                <label for="gender">
+                    Gender
+                </label>
+
+                <select
+                    id="gender"
+                    name="gender"
+                    required>
+
+                    <option value="">
+                        Select Gender
+                    </option>
+
+                    <option value="Male">
+                        Male
+                    </option>
+
+                    <option value="Female">
+                        Female
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Date of Birth -->
+
+            <div>
+
+                <label for="date_of_birth">
+                    Date of Birth
+                </label>
+
+                <input
+                    id="date_of_birth"
+                    type="date"
+                    name="date_of_birth"
+                    required>
+
+            </div>
+
+
+            <!-- Email -->
+
+            <div>
+
+                <label for="email">
+                    Email
+                </label>
+
+                <input
+                    id="email"
+                    type="email"
+                    name="email">
+
+            </div>
+
+
+            <!-- Phone -->
+
+            <div>
+
+                <label for="phone_number">
+                    Phone Number
+                </label>
+
+                <input
+                    id="phone_number"
+                    type="text"
+                    name="phone_number">
+
+            </div>
+
+
+            <!-- Photo -->
+
+            <div>
+
+                <label for="photo">
+                    Photo Filename
+                </label>
+
+                <input
+                    id="photo"
+                    type="text"
+                    name="photo"
+                    placeholder="candidate.jpg">
+
+            </div>
+
+
+            <!-- Biography -->
+
+            <div>
+
+                <label for="biography">
+                    Biography
+                </label>
+
+                <textarea
+                    id="biography"
+                    name="biography"
+                    rows="5"></textarea>
+
+            </div>
+
+
+            <!-- Manifesto -->
+
+            <div>
+
+                <label for="manifesto">
+                    Manifesto
+                </label>
+
+                <textarea
+                    id="manifesto"
+                    name="manifesto"
+                    rows="6"></textarea>
+
+            </div>
+
+
+            <button
+                class="btn"
+                type="submit">
+
+                Register Candidate
+
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- Registered Candidates -->
+    <!-- ========================================= -->
+
+    <section class="card">
+
+        <h3>
+            Registered Candidates
+        </h3>
+
+
+        <table class="admin-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Candidate
+                    </th>
+
+                    <th>
+                        Election
+                    </th>
+
+                    <th>
+                        Party
+                    </th>
+
+                    <th>
+                        Position
+                    </th>
+
+                    <th>
+                        Approval
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            {{if .Candidates}}
+
+                {{range .Candidates}}
+
+                <tr>
+
+                    <td>
+                        {{.ID}}
+                    </td>
+
+
+                    <td>
+
+                        <strong>
+                            {{.FirstName}}
+                            {{.LastName}}
+                        </strong>
+
+                        <br>
+
+                        <small>
+                            {{.Gender}}
+                        </small>
+
+                    </td>
+
+
+                    <td>
+                        {{.ElectionName}}
+                    </td>
+
+
+                    <td>
+                        {{.PartyName}}
+                    </td>
+
+
+                    <td>
+                        {{.PositionName}}
+                    </td>
+
+
+                    <td>
+
+                        {{if .IsApproved}}
+
+                        <span class="badge badge-success">
+                            Approved
+                        </span>
+
+                        {{else}}
+
+                        <span class="badge badge-warning">
+                            Pending
+                        </span>
+
+                        {{end}}
+
+                    </td>
+
+
+                    <td>
+
+                        {{if .IsActive}}
+
+                        <span class="badge badge-success">
+                            Active
+                        </span>
+
+                        {{else}}
+
+                        <span class="badge badge-danger">
+                            Inactive
+                        </span>
+
+                        {{end}}
+
+                    </td>
+
+
+                    <td>
+
+                        {{if not .IsApproved}}
+
+                        <a
+                            class="btn-small"
+                            href="/admin/candidate/approve?id={{.ID}}">
+
+                            Approve
+
+                        </a>
+
+                        {{end}}
+
+
+                        {{if .IsActive}}
+
+                        <a
+                            class="btn-small warning"
+                            href="/admin/candidate/deactivate?id={{.ID}}">
+
+                            Deactivate
+
+                        </a>
+
+                        {{else}}
+
+                        <a
+                            class="btn-small"
+                            href="/admin/candidate/activate?id={{.ID}}">
+
+                            Activate
+
+                        </a>
+
+                        {{end}}
+
+
+                        <a
+                            class="btn-small danger"
+                            href="/admin/candidate/delete?id={{.ID}}"
+                            onclick="return confirm('Delete this candidate?');">
+
+                            Delete
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {{end}}
+
+            {{else}}
+
+                <tr>
+
+                    <td colspan="8">
+
+                        No candidates have been registered.
+
+                    </td>
+
+                </tr>
+
+            {{end}}
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <div class="container">
+
+        <p>
+            © 2026 Nigeria Online Voting System
+        </p>
+
+    </div>
+
+</footer>
+
+</body>
+
+</html>
