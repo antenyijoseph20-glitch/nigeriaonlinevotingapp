@@ -1,0 +1,335 @@
+[
+    {
+        "id": 1,
+        "name": "Abia",
+        "code": "AB",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 2,
+        "name": "Adamawa",
+        "code": "AD",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 3,
+        "name": "Akwa Ibom",
+        "code": "AK",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 4,
+        "name": "Anambra",
+        "code": "AN",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 5,
+        "name": "Bauchi",
+        "code": "BA",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 6,
+        "name": "Bayelsa",
+        "code": "BY",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 7,
+        "name": "Benue",
+        "code": "BE",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 8,
+        "name": "Borno",
+        "code": "BO",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 9,
+        "name": "Cross River",
+        "code": "CR",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 10,
+        "name": "Delta",
+        "code": "DE",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 11,
+        "name": "Ebonyi",
+        "code": "EB",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 12,
+        "name": "Edo",
+        "code": "ED",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 13,
+        "name": "Ekiti",
+        "code": "EK",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 14,
+        "name": "Enugu",
+        "code": "EN",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 15,
+        "name": "Gombe",
+        "code": "GO",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 16,
+        "name": "Imo",
+        "code": "IM",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 17,
+        "name": "Jigawa",
+        "code": "JI",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 18,
+        "name": "Kaduna",
+        "code": "KD",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 19,
+        "name": "Kano",
+        "code": "KN",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 20,
+        "name": "Katsina",
+        "code": "KT",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 21,
+        "name": "Kebbi",
+        "code": "KE",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 22,
+        "name": "Kogi",
+        "code": "KO",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 23,
+        "name": "Kwara",
+        "code": "KW",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 24,
+        "name": "Lagos",
+        "code": "LA",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 25,
+        "name": "Nasarawa",
+        "code": "NA",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 26,
+        "name": "Niger",
+        "code": "NI",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 27,
+        "name": "Ogun",
+        "code": "OG",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 28,
+        "name": "Ondo",
+        "code": "ON",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 29,
+        "name": "Osun",
+        "code": "OS",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 30,
+        "name": "Oyo",
+        "code": "OY",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 31,
+        "name": "Plateau",
+        "code": "PL",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 32,
+        "name": "Rivers",
+        "code": "RI",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 33,
+        "name": "Sokoto",
+        "code": "SO",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 34,
+        "name": "Taraba",
+        "code": "TA",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 35,
+        "name": "Yobe",
+        "code": "YO",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 36,
+        "name": "Zamfara",
+        "code": "ZA",
+        "is_fct": false,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    },
+    {
+        "id": 37,
+        "name": "Federal Capital Territory",
+        "code": "FC",
+        "is_fct": true,
+        "is_active": true,
+        "created_at": "2026-08-16T00:00:00Z",
+        "updated_at": "2026-08-16T00:00:00Z"
+    }
+]

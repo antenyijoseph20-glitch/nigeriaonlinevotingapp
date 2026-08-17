@@ -5,11 +5,15 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <title>Verification Details</title>
+    <title>
+        Verification Details | Nigeria Online Voting System
+    </title>
 
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet"
+          href="/static/css/style.css">
 
 </head>
 
@@ -17,100 +21,209 @@
 
 <header>
 
-    <h1>🇳🇬 Nigeria Online Voting System</h1>
+    <div class="container">
 
-    <nav>
-        <a href="/admin">Admin Dashboard</a>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/logout">Logout</a>
-    </nav>
+        <h1>
+            🇳🇬 Nigeria Online Voting System
+        </h1>
+
+        <nav>
+
+            <a href="/admin">
+                Admin Dashboard
+            </a>
+
+            <a href="/dashboard">
+                Dashboard
+            </a>
+
+            <a href="/logout">
+                Logout
+            </a>
+
+        </nav>
+
+    </div>
 
 </header>
 
 <main class="container">
 
-    <h2>Verification Details</h2>
+    <section class="page-title">
 
-    <div class="card">
+        <h2>
+            Verification Details
+        </h2>
 
-        <h3>Applicant Information</h3>
+        <p>
+            Review the voter's verification information before approving
+            or rejecting the request.
+        </p>
 
-        <p><strong>Verification ID:</strong> {{.ID}}</p>
+    </section>
 
-        <p><strong>User ID:</strong> {{.UserID}}</p>
 
-        <p><strong>Full Name:</strong> {{.FullName}}</p>
+    <section class="card">
 
-        <p><strong>Date of Birth:</strong> {{.DateOfBirth}}</p>
+        <h3>
+            Applicant Information
+        </h3>
 
-        <p><strong>Gender:</strong> {{.Gender}}</p>
+        <p>
+            <strong>Verification ID:</strong>
+            {{.ID}}
+        </p>
 
-    </div>
+        <p>
+            <strong>User ID:</strong>
+            {{.UserID}}
+        </p>
 
-    <div class="card">
+        <p>
+            <strong>Full Name:</strong>
+            {{.FullName}}
+        </p>
 
-        <h3>Voting Information</h3>
+        <p>
+            <strong>Date of Birth:</strong>
+            {{.DateOfBirth}}
+        </p>
 
-        <p><strong>State:</strong> {{.State}}</p>
+        <p>
+            <strong>Gender:</strong>
+            {{.Gender}}
+        </p>
 
-        <p><strong>LGA:</strong> {{.LGA}}</p>
+    </section>
 
-        <p><strong>Ward:</strong> {{.Ward}}</p>
 
-        <p><strong>Polling Unit:</strong> {{.PollingUnit}}</p>
+    <section class="card">
 
-    </div>
+        <h3>
+            Voting Information
+        </h3>
 
-    <div class="card">
+        <p>
+            <strong>State:</strong>
+            {{.State}}
+        </p>
 
-        <h3>Verification Status</h3>
+        <p>
+            <strong>LGA:</strong>
+            {{.LGA}}
+        </p>
 
-        <p><strong>Status:</strong> {{.Status}}</p>
+        <p>
+            <strong>Ward:</strong>
+            {{.Ward}}
+        </p>
 
-        <p><strong>Submitted:</strong> {{.SubmittedAt}}</p>
+        <p>
+            <strong>Polling Unit:</strong>
+            {{.PollingUnit}}
+        </p>
 
-        <p><strong>Reviewed:</strong> {{.ReviewedAt}}</p>
+    </section>
 
-    </div>
 
-    <div class="actions">
+    <section class="card">
 
-        <form action="/admin/approve" method="POST">
+        <h3>
+            Verification Status
+        </h3>
+
+        <p>
+            <strong>Status:</strong>
+            {{.Status}}
+        </p>
+
+        <p>
+            <strong>Submitted:</strong>
+            {{.SubmittedAt}}
+        </p>
+
+        <p>
+            <strong>Reviewed:</strong>
+            {{.ReviewedAt}}
+        </p>
+
+    </section>
+
+
+    {{if eq .Status "pending"}}
+
+    <section class="card">
+
+        <h3>
+            Administrator Decision
+        </h3>
+
+        <p>
+            Review the information carefully before making a decision.
+        </p>
+
+
+        <form
+            action="/admin/approve"
+            method="POST"
+            style="display: inline;">
 
             <input
                 type="hidden"
                 name="verificationID"
                 value="{{.ID}}">
 
-            <button type="submit">
+            <button
+                type="submit"
+                class="btn">
+
                 ✅ Approve Verification
+
             </button>
 
         </form>
 
-        <form action="/admin/reject" method="POST">
+
+        <form
+            action="/admin/reject"
+            method="POST"
+            style="display: inline;">
 
             <input
                 type="hidden"
                 name="verificationID"
                 value="{{.ID}}">
 
-            <button type="submit">
+            <button
+                type="submit"
+                class="btn">
+
                 ❌ Reject Verification
+
             </button>
 
         </form>
 
-    </div>
+    </section>
 
-    <br>
+    {{end}}
 
-    <a href="/admin">
-        ← Back to Admin Dashboard
-    </a>
+
+    <section class="card">
+
+        <a
+            class="btn"
+            href="/admin">
+
+            ← Back to Admin Dashboard
+
+        </a>
+
+    </section>
 
 </main>
 
 </body>
 
 </html>
+

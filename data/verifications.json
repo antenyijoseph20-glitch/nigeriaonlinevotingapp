@@ -1,0 +1,17 @@
+[
+    {
+        "ID": 1,
+        "UserID": 5,
+        "FullName": "Antenyi Joseph Ochohepo",
+        "DateOfBirth": "1987-03-27",
+        "Gender": "Male",
+        "State": "Benue",
+        "LGA": "Agatu",
+        "Ward": "Ogwule Kaduna",
+        "PollingUnit": "Market square",
+        "Status": "pending",
+        "SubmittedAt": "2026-08-17T11:52:13.887364311+01:00",
+        "ReviewedAt": "0001-01-01T00:00:00Z",
+        "ReviewedBy": 0
+    }
+]

@@ -142,5 +142,29 @@
         "created_at": "2026-07-23T14:31:52.173587298+01:00",
         "updated_at": "2026-07-23T14:31:52.173587298+01:00",
         "last_login": "0001-01-01T00:00:00Z"
+    },
+    {
+        "id": 7,
+        "first_name": "f",
+        "last_name": "o",
+        "other_name": "",
+        "date_of_birth": "0001-01-01T00:00:00Z",
+        "gender": "",
+        "email": "fred@gmail.com",
+        "phone_number": "09076543214",
+        "password_hash": "$2a$10$/mwQ.nRnLzVqu1Bt/YonxurEDcKTBRUDpAxmbtnNKpIaz595g9VWO",
+        "nin": "98675464676",
+        "vin": "",
+        "state": "",
+        "lga": "",
+        "ward": "",
+        "polling_unit": "",
+        "role": "voter",
+        "is_verified": false,
+        "has_voted": false,
+        "account_active": false,
+        "created_at": "2026-08-17T12:57:49.525794954+01:00",
+        "updated_at": "2026-08-17T12:57:49.525794954+01:00",
+        "last_login": "0001-01-01T00:00:00Z"
     }
 ]

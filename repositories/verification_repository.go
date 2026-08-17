@@ -1,8 +1,6 @@
 package repositories
 
-import (
-	"nigeriaonlinevoting/models"
-)
+import "nigeriaonlinevoting/models"
 
 type VerificationRepository interface {
 	Create(

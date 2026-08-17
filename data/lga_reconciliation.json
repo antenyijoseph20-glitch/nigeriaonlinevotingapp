@@ -1,0 +1,82 @@
+[
+    {
+        "source_code": 713,
+        "state_code": "BE",
+        "source_name": "MARKURDI",
+        "canonical_name": "MAKURDI",
+        "type": "LGA",
+        "verification_status": "verified",
+        "verified_against": "INEC",
+        "verification_note": "INEC identifies the Benue LGA as MAKURDI."
+    },
+    {
+        "source_code": 801,
+        "state_code": "BO",
+        "source_name": "ABADAN",
+        "canonical_name": "ABADAM",
+        "type": "LGA",
+        "verification_status": "verified",
+        "verified_against": "INEC",
+        "verification_note": "INEC identifies the Borno LGA as ABADAM."
+    },
+    {
+        "source_code": 905,
+        "state_code": "CR",
+        "source_name": "BEKWARRA",
+        "canonical_name": "BEKWARRA",
+        "type": "LGA",
+        "verification_status": "verified",
+        "verified_against": "INEC",
+        "verification_note": "INEC uses BEKWARRA."
+    },
+    {
+        "source_code": 1023,
+        "state_code": "DE",
+        "source_name": "WARRI NORTH",
+        "canonical_name": "WARRI NORTH",
+        "type": "LGA",
+        "verification_status": "verified",
+        "verified_against": "INEC",
+        "verification_note": "INEC uses WARRI NORTH."
+    },
+    {
+        "source_code": 1024,
+        "state_code": "DE",
+        "source_name": "WARR SOUTH WEST",
+        "canonical_name": "WARRI SOUTH WEST",
+        "type": "LGA",
+        "verification_status": "verified",
+        "verified_against": "INEC",
+        "verification_note": "INEC uses WARRI SOUTH WEST."
+    },
+    {
+        "source_code": 1025,
+        "state_code": "DE",
+        "source_name": "WARR SOUTH",
+        "canonical_name": "WARRI SOUTH",
+        "type": "LGA",
+        "verification_status": "verified",
+        "verified_against": "INEC",
+        "verification_note": "INEC uses WARRI SOUTH."
+    },
+    {
+        "source_code": 1807,
+        "state_code": "KD",
+        "source_name": "JEMA A",
+        "canonical_name": "JEMA'A",
+        "type": "LGA",
+        "verification_status": "verified",
+        "verified_against": "INEC",
+        "verification_note": "INEC uses JEMA'A."
+    },
+    {
+        "source_code": 2415,
+        "state_code": "LA",
+        "source_name": "LAGOS MAINLAN",
+        "canonical_name": "LAGOS MAINLAND",
+        "type": "LGA",
+        "verification_status": "verified",
+        "verified_against": "INEC",
+        "verification_note": "INEC uses LAGOS MAINLAND."
+    }
+]

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bytes"
 	"html/template"
 	"net/http"
 
@@ -31,6 +32,10 @@ func (h *AdminHandler) Dashboard(
 	r *http.Request,
 ) {
 
+	// =====================================
+	// HTTP METHOD CHECK
+	// =====================================
+
 	if r.Method != http.MethodGet {
 
 		http.Error(
@@ -42,12 +47,19 @@ func (h *AdminHandler) Dashboard(
 		return
 	}
 
-	data := AdminDashboardData{
+	// =====================================
+	// LOAD DASHBOARD DATA
+	// =====================================
 
+	data := AdminDashboardData{
 		Statistics: h.AdminService.GetDashboardStatistics(),
 
 		Verifications: h.AdminService.GetPendingVerifications(),
 	}
+
+	// =====================================
+	// LOAD TEMPLATE
+	// =====================================
 
 	tmpl, err := template.ParseFiles(
 		"templates/admin_dashboard.html",
@@ -64,8 +76,20 @@ func (h *AdminHandler) Dashboard(
 		return
 	}
 
+	// =====================================
+	// RENDER TEMPLATE INTO BUFFER
+	// =====================================
+	//
+	// We render into a buffer first.
+	//
+	// This prevents a partially-written
+	// HTTP response if template execution
+	// fails.
+
+	var buffer bytes.Buffer
+
 	err = tmpl.Execute(
-		w,
+		&buffer,
 		data,
 	)
 
@@ -77,6 +101,27 @@ func (h *AdminHandler) Dashboard(
 			http.StatusInternalServerError,
 		)
 
+		return
+	}
+
+	// =====================================
+	// SEND SUCCESSFUL RESPONSE
+	// =====================================
+
+	w.Header().Set(
+		"Content-Type",
+		"text/html; charset=utf-8",
+	)
+
+	w.WriteHeader(
+		http.StatusOK,
+	)
+
+	_, err = w.Write(
+		buffer.Bytes(),
+	)
+
+	if err != nil {
 		return
 	}
 }

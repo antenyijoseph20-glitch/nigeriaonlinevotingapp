@@ -41,6 +41,14 @@
                 Political Parties
             </a>
 
+            <a href="/admin/positions">
+                Positions
+            </a>
+
+            <a href="/admin/candidates">
+                Candidates
+            </a>
+
             <a href="/logout">
                 Logout
             </a>
@@ -56,33 +64,134 @@
     <section class="page-title">
 
         <h2>
-
             Administrator Dashboard
-
         </h2>
 
         <p>
-
-            Manage voter verification, elections and political parties.
-
+            Manage voter verification, elections,
+            political parties and candidates.
         </p>
 
     </section>
+
+    <!-- =====================================
+         ADMIN STATISTICS
+         ===================================== -->
 
     <section class="dashboard-grid">
 
         <div class="card">
 
             <h3>
-
-                Election Management
-
+                Total Users
             </h3>
 
             <p>
+                {{.Statistics.TotalUsers}}
+            </p>
 
+        </div>
+
+        <div class="card">
+
+            <h3>
+                Total Voters
+            </h3>
+
+            <p>
+                {{.Statistics.TotalVoters}}
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>
+                Verified Voters
+            </h3>
+
+            <p>
+                {{.Statistics.VerifiedVoters}}
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>
+                Pending Verifications
+            </h3>
+
+            <p>
+                {{.Statistics.PendingVerifications}}
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>
+                Approved Verifications
+            </h3>
+
+            <p>
+                {{.Statistics.ApprovedVerifications}}
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>
+                Rejected Verifications
+            </h3>
+
+            <p>
+                {{.Statistics.RejectedVerifications}}
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>
+                Total Administrators
+            </h3>
+
+            <p>
+                {{.Statistics.TotalAdmins}}
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>
+                Votes Cast
+            </h3>
+
+            <p>
+                {{.Statistics.TotalVotesCast}}
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- =====================================
+         ELECTION MANAGEMENT
+         ===================================== -->
+
+    <section class="dashboard-grid">
+
+        <div class="card">
+
+            <h3>
+                Election Management
+            </h3>
+
+            <p>
                 Create, open, close and monitor elections.
-
             </p>
 
             <a
@@ -95,18 +204,18 @@
 
         </div>
 
+        <!-- =====================================
+             POLITICAL PARTIES
+             ===================================== -->
+
         <div class="card">
 
             <h3>
-
                 Political Parties
-
             </h3>
 
             <p>
-
                 Register and manage political parties.
-
             </p>
 
             <a
@@ -119,14 +228,65 @@
 
         </div>
 
+        <!-- =====================================
+             POSITIONS
+             ===================================== -->
+
+        <div class="card">
+
+            <h3>
+                Electoral Positions
+            </h3>
+
+            <p>
+                Manage presidential, legislative,
+                gubernatorial and local positions.
+            </p>
+
+            <a
+                class="btn"
+                href="/admin/positions">
+
+                📋 Manage Positions
+
+            </a>
+
+        </div>
+
+        <!-- =====================================
+             CANDIDATES
+             ===================================== -->
+
+        <div class="card">
+
+            <h3>
+                Candidates
+            </h3>
+
+            <p>
+                Register, review and manage candidates.
+            </p>
+
+            <a
+                class="btn"
+                href="/admin/candidates">
+
+                👤 Manage Candidates
+
+            </a>
+
+        </div>
+
     </section>
+
+    <!-- =====================================
+         PENDING VERIFICATIONS
+         ===================================== -->
 
     <section class="card">
 
         <h3>
-
             Pending Verification Requests
-
         </h3>
 
         <table class="admin-table">
@@ -135,15 +295,25 @@
 
                 <tr>
 
-                    <th>ID</th>
+                    <th>
+                        ID
+                    </th>
 
-                    <th>Full Name</th>
+                    <th>
+                        Full Name
+                    </th>
 
-                    <th>State</th>
+                    <th>
+                        State
+                    </th>
 
-                    <th>Status</th>
+                    <th>
+                        Status
+                    </th>
 
-                    <th>Action</th>
+                    <th>
+                        Action
+                    </th>
 
                 </tr>
 
@@ -151,17 +321,25 @@
 
             <tbody>
 
-            {{range .}}
+            {{range .Verifications}}
 
                 <tr>
 
-                    <td>{{.ID}}</td>
+                    <td>
+                        {{.ID}}
+                    </td>
 
-                    <td>{{.FullName}}</td>
+                    <td>
+                        {{.FullName}}
+                    </td>
 
-                    <td>{{.State}}</td>
+                    <td>
+                        {{.State}}
+                    </td>
 
-                    <td>{{.Status}}</td>
+                    <td>
+                        {{.Status}}
+                    </td>
 
                     <td>
 
