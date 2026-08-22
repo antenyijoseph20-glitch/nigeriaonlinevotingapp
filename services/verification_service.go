@@ -2,44 +2,62 @@ package services
 
 import (
 	"errors"
+	"sync"
 	"time"
 
 	"nigeriaonlinevoting/models"
 	"nigeriaonlinevoting/repositories"
 )
 
+// VerificationService handles voter verification business rules.
 type VerificationService struct {
 	verificationRepo repositories.VerificationRepository
+	userRepo         repositories.UserRepository
 
-	userRepo repositories.UserRepository
+	// Protects approval/rejection operations from concurrent
+	// requests inside this application process.
+	mu sync.Mutex
 }
 
-// Constructor
-
+// NewVerificationService creates a new verification service.
 func NewVerificationService(
 	verificationRepo repositories.VerificationRepository,
 	userRepo repositories.UserRepository,
 ) *VerificationService {
 
 	return &VerificationService{
-
 		verificationRepo: verificationRepo,
-
-		userRepo: userRepo,
+		userRepo:         userRepo,
 	}
 }
 
-// Submit a voter verification request
+// ============================================================
+// Submit Verification
+// ============================================================
 
+// SubmitVerification submits a new voter verification request.
 func (s *VerificationService) SubmitVerification(
 	verification models.Verification,
 ) error {
 
-	// Check if user already submitted verification
+	if verification.UserID <= 0 {
+		return errors.New("invalid user ID")
+	}
 
-	existing, err := s.verificationRepo.GetByUserID(
+	// Make sure the user actually exists.
+	_, err := s.userRepo.GetByID(
 		verification.UserID,
 	)
+
+	if err != nil {
+		return errors.New("user not found")
+	}
+
+	// Check whether this user already has a verification record.
+	existing, err :=
+		s.verificationRepo.GetByUserID(
+			verification.UserID,
+		)
 
 	if err == nil && existing != nil {
 
@@ -48,151 +66,328 @@ func (s *VerificationService) SubmitVerification(
 		)
 	}
 
-	// Default verification status
-
+	// New verification requests always begin as pending.
 	verification.Status = "pending"
-
 	verification.SubmittedAt = time.Now()
+	verification.ReviewedAt = time.Time{}
+	verification.ReviewedBy = 0
 
 	return s.verificationRepo.Create(
 		verification,
 	)
-
 }
 
-// Get verification record for a user
+// ============================================================
+// Get User Verification
+// ============================================================
 
+// GetUserVerification returns the verification record
+// belonging to a user.
 func (s *VerificationService) GetUserVerification(
 	userID int,
 ) (*models.Verification, error) {
 
+	if userID <= 0 {
+		return nil, errors.New("invalid user ID")
+	}
+
 	return s.verificationRepo.GetByUserID(
 		userID,
 	)
-
 }
 
-// Get all verification requests
-// Mainly for admin dashboard
+// ============================================================
+// Get All Verifications
+// ============================================================
 
+// GetAllVerifications returns all verification requests.
 func (s *VerificationService) GetAllVerifications() []models.Verification {
 
 	return s.verificationRepo.GetAll()
-
 }
 
-// Approve voter verification
+// ============================================================
+// Approve Verification
+// ============================================================
 
+// ApproveVerification approves a pending voter verification.
+//
+// adminID identifies the administrator who performed the
+// approval.
 func (s *VerificationService) ApproveVerification(
 	verificationID int,
+	adminID int,
 ) error {
 
-	// Find verification record
+	// Prevent concurrent approval/rejection operations
+	// inside this application process.
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
-	verifications :=
-		s.verificationRepo.GetAll()
-
-	for _, verification := range verifications {
-
-		if verification.ID == verificationID {
-
-			// Update verification status
-
-			verification.Status = "approved"
-
-			verification.ReviewedAt = time.Now()
-
-			err := s.verificationRepo.Update(
-				verification,
-			)
-
-			if err != nil {
-
-				return err
-
-			}
-
-			// Update user account
-
-			user, err :=
-				s.userRepo.GetByID(
-					verification.UserID,
-				)
-
-			if err != nil {
-
-				return err
-
-			}
-
-			user.IsVerified = true
-
-			user.UpdatedAt = time.Now()
-
-			return s.userRepo.Update(
-				*user,
-			)
-
-		}
+	if verificationID <= 0 {
+		return errors.New(
+			"invalid verification ID",
+		)
 	}
 
-	return errors.New(
-		"verification record not found",
-	)
+	if adminID <= 0 {
+		return errors.New(
+			"invalid administrator ID",
+		)
+	}
 
+	// --------------------------------------------------------
+	// Find verification
+	// --------------------------------------------------------
+
+	verification, err :=
+		s.GetVerificationByID(
+			verificationID,
+		)
+
+	if err != nil {
+		return err
+	}
+
+	// --------------------------------------------------------
+	// Prevent double review
+	// --------------------------------------------------------
+
+	if verification.Status != "pending" {
+
+		return errors.New(
+			"verification has already been reviewed",
+		)
+	}
+
+	// --------------------------------------------------------
+	// Load voter
+	// --------------------------------------------------------
+
+	user, err :=
+		s.userRepo.GetByID(
+			verification.UserID,
+		)
+
+	if err != nil {
+		return errors.New(
+			"voter account not found",
+		)
+	}
+
+	if user == nil {
+		return errors.New(
+			"voter account not found",
+		)
+	}
+
+	// --------------------------------------------------------
+	// Prevent approving an already verified voter
+	// --------------------------------------------------------
+
+	if user.IsVerified {
+
+		return errors.New(
+			"user is already verified",
+		)
+	}
+
+	// --------------------------------------------------------
+	// Preserve original records for rollback
+	// --------------------------------------------------------
+
+	originalVerification := *verification
+	originalUser := *user
+
+	now := time.Now()
+
+	// --------------------------------------------------------
+	// Prepare approved verification
+	// --------------------------------------------------------
+
+	verification.Status = "approved"
+	verification.ReviewedAt = now
+	verification.ReviewedBy = adminID
+
+	// --------------------------------------------------------
+	// Prepare verified user
+	// --------------------------------------------------------
+
+	user.IsVerified = true
+	user.AccountActive = true
+	user.UpdatedAt = now
+
+	// --------------------------------------------------------
+	// Save verification first
+	// --------------------------------------------------------
+
+	if err := s.verificationRepo.Update(
+		*verification,
+	); err != nil {
+
+		return err
+	}
+
+	// --------------------------------------------------------
+	// Save user
+	// --------------------------------------------------------
+
+	if err := s.userRepo.Update(
+		*user,
+	); err != nil {
+
+		// ----------------------------------------------------
+		// ROLLBACK
+		//
+		// The verification was already changed to approved.
+		// Restore it so we do not leave the system in an
+		// inconsistent state.
+		// ----------------------------------------------------
+
+		rollbackErr :=
+			s.verificationRepo.Update(
+				originalVerification,
+			)
+
+		if rollbackErr != nil {
+
+			return errors.New(
+				"approval failed and rollback also failed",
+			)
+		}
+
+		// Restore user as well in case the repository changed
+		// anything before returning its error.
+		_ = s.userRepo.Update(
+			originalUser,
+		)
+
+		return errors.New(
+			"unable to verify voter account",
+		)
+	}
+
+	return nil
 }
 
-// Reject verification
+// ============================================================
+// Reject Verification
+// ============================================================
 
+// RejectVerification rejects a pending voter verification.
+//
+// adminID identifies the administrator who performed the
+// rejection.
 func (s *VerificationService) RejectVerification(
 	verificationID int,
+	adminID int,
 ) error {
 
-	verifications :=
-		s.verificationRepo.GetAll()
+	// Protect against concurrent review requests.
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
-	for _, verification := range verifications {
-
-		if verification.ID == verificationID {
-
-			verification.Status = "rejected"
-
-			verification.ReviewedAt = time.Now()
-
-			return s.verificationRepo.Update(
-				verification,
-			)
-
-		}
+	if verificationID <= 0 {
+		return errors.New(
+			"invalid verification ID",
+		)
 	}
 
-	return errors.New(
-		"verification record not found",
-	)
+	if adminID <= 0 {
+		return errors.New(
+			"invalid administrator ID",
+		)
+	}
 
+	// --------------------------------------------------------
+	// Find verification
+	// --------------------------------------------------------
+
+	verification, err :=
+		s.GetVerificationByID(
+			verificationID,
+		)
+
+	if err != nil {
+		return err
+	}
+
+	// --------------------------------------------------------
+	// Prevent double review
+	// --------------------------------------------------------
+
+	if verification.Status != "pending" {
+
+		return errors.New(
+			"verification has already been reviewed",
+		)
+	}
+
+	// --------------------------------------------------------
+	// Update rejection
+	// --------------------------------------------------------
+
+	now := time.Now()
+
+	verification.Status = "rejected"
+	verification.ReviewedAt = now
+	verification.ReviewedBy = adminID
+
+	return s.verificationRepo.Update(
+		*verification,
+	)
 }
+
+// ============================================================
+// Get User By ID
+// ============================================================
 
 // GetUserByID returns a user by ID.
 func (s *VerificationService) GetUserByID(
 	id int,
 ) (*models.User, error) {
 
+	if id <= 0 {
+		return nil, errors.New(
+			"invalid user ID",
+		)
+	}
+
 	return s.userRepo.GetByID(id)
 }
 
-// GetVerificationByID returns a verification record by its ID.
+// ============================================================
+// Get Verification By ID
+// ============================================================
+
+// GetVerificationByID returns a verification record by ID.
 func (s *VerificationService) GetVerificationByID(
 	id int,
 ) (*models.Verification, error) {
 
-	verifications := s.verificationRepo.GetAll()
+	if id <= 0 {
+		return nil, errors.New(
+			"invalid verification ID",
+		)
+	}
 
-	for _, verification := range verifications {
+	verifications :=
+		s.verificationRepo.GetAll()
 
-		if verification.ID == id {
+	for i := range verifications {
+
+		if verifications[i].ID == id {
+
+			// Return a copy rather than relying on the
+			// range-variable address.
+			verification :=
+				verifications[i]
+
 			return &verification, nil
 		}
 	}
 
-	return nil, errors.New("verification not found")
+	return nil, errors.New(
+		"verification not found",
+	)
 }

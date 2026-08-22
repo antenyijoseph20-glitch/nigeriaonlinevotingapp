@@ -392,11 +392,85 @@ func (s *ElectionService) OpenElection(
 	}
 
 	// -------------------------------------
-	// Open election.
+	// Open election and save changes.
 	// -------------------------------------
 
 	election.Status = "open"
 	election.UpdatedAt = now
+
+	return s.ElectionRepo.Update(
+		*election,
+	)
+} // <--- Closes OpenElection properly
+
+// =====================================
+// Schedule Election
+// =====================================
+
+func (s *ElectionService) ScheduleElection(
+	id int,
+) error {
+
+	if s.ElectionRepo == nil {
+		return errors.New(
+			"election repository is required",
+		)
+	}
+
+	if id <= 0 {
+		return errors.New(
+			"invalid election ID",
+		)
+	}
+
+	// Fetch election using the 'id' parameter
+	election, err := s.ElectionRepo.GetByID(
+		id,
+	)
+	if err != nil {
+		return err
+	}
+
+	// -------------------------------------
+	// Only draft elections can be scheduled.
+	// -------------------------------------
+
+	if election.Status != "draft" {
+		return errors.New(
+			"only a draft election can be scheduled",
+		)
+	}
+
+	// -------------------------------------
+	// Validate dates.
+	// -------------------------------------
+
+	if election.StartDate.IsZero() {
+		return errors.New(
+			"election start date is required",
+		)
+	}
+
+	if election.EndDate.IsZero() {
+		return errors.New(
+			"election end date is required",
+		)
+	}
+
+	if !election.EndDate.After(
+		election.StartDate,
+	) {
+		return errors.New(
+			"end date must be after start date",
+		)
+	}
+
+	// -------------------------------------
+	// Schedule election.
+	// -------------------------------------
+
+	election.Status = "scheduled"
+	election.UpdatedAt = time.Now()
 
 	return s.ElectionRepo.Update(
 		*election,
@@ -423,6 +497,10 @@ func (s *ElectionService) CloseElection(
 		)
 	}
 
+	// -------------------------------------
+	// Get target election first.
+	// -------------------------------------
+
 	election, err := s.ElectionRepo.GetByID(
 		id,
 	)
@@ -432,7 +510,7 @@ func (s *ElectionService) CloseElection(
 	}
 
 	// -------------------------------------
-	// Validate status.
+	// Validate current status.
 	// -------------------------------------
 
 	if election.Status == "closed" {
@@ -448,7 +526,7 @@ func (s *ElectionService) CloseElection(
 	}
 
 	// -------------------------------------
-	// Close election.
+	// Close election and save changes.
 	// -------------------------------------
 
 	election.Status = "closed"
